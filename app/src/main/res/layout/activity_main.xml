@@ -22,63 +22,80 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:layout_width="397dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:background="?attr/colorPrimary"
                 android:elevation="4dp"
-                app:titleTextColor="@color/md_white_1000"
                 android:minHeight="?attr/actionBarSize"
-                android:paddingTop="@dimen/tool_bar_top_padding"
                 android:transitionName="actionBar"
-                app:layout_constraintBottom_toTopOf="@+id/sample_text"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:titleTextColor="@color/md_white_1000" />
 
-            <TextView
-                android:id="@+id/sample_text"
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout3"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="65dp"
-                android:fontFamily="@font/alef"
-                android:text="Hello World!"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextLarge"
-                android:textSize="16sp"
+                android:layout_height="105dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bordered"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+                <TextView
+                    android:id="@+id/dateText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="TextView"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout"
-                android:layout_width="350dp"
+                android:layout_width="0dp"
                 android:layout_height="252dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/bordered"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sample_text">
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 
                 <TextView
                     android:id="@+id/lastTempemperatureLabel"
                     android:layout_width="380dp"
                     android:layout_height="42dp"
+                    android:layout_marginBottom="192dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:fontFamily="@font/alef"
                     android:text="@string/last_temperature"
                     android:textAlignment="center"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.375"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
@@ -92,28 +109,29 @@
                     android:layout_marginStart="16dp"
                     android:text="TextView"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="40sp"
+                    android:textSize="@dimen/value_text_size"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.475"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/lastTempemperatureLabel"
-                    app:layout_constraintVertical_bias="0.58000004" />
+                    app:layout_constraintVertical_bias="1.0" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout2"
-                android:layout_width="350dp"
+                android:layout_width="0dp"
                 android:layout_height="252dp"
-                android:layout_marginBottom="20dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/bordered"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-                app:layout_constraintVertical_bias="0.77">
+                app:layout_constraintVertical_bias="0.031">
 
                 <TextView
                     android:id="@+id/lastHumidityLabel"
@@ -128,7 +146,6 @@
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.375"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
