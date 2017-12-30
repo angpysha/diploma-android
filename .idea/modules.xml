@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RaspiInfo.iml" filepath="$PROJECT_DIR$/RaspiInfo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.andrewpetrowski.diploma.bridgelib-0.1/com.andrewpetrowski.diploma.bridgelib-0.1.iml" filepath="$PROJECT_DIR$/com.andrewpetrowski.diploma.bridgelib-0.1/com.andrewpetrowski.diploma.bridgelib-0.1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/unirest-java/unirest-java.iml" filepath="$PROJECT_DIR$/unirest-java/unirest-java.iml" />
     </modules>
   </component>
 </project>

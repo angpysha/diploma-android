@@ -9,6 +9,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/com.andrewpetrowski.diploma.bridgelib-0.1" />
+            <option value="$PROJECT_DIR$/unirest-java" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
