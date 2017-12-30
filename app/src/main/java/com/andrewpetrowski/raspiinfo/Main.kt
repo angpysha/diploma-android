@@ -9,6 +9,10 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import co.zsmb.materialdrawerkt.builders.DrawerBuilderKt
+import co.zsmb.materialdrawerkt.builders.drawer
+import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
+import co.zsmb.materialdrawerkt.draweritems.divider
 import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
 import com.andrewpetrowski.diploma.bridgelib.Models.DHT11_Data
 import kotlinx.android.synthetic.main.activity_main.*
@@ -33,7 +37,7 @@ class Main : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Example of a call to a native method
-        sample_text.text = stringFromJNI()
+       // sample_text.text = stringFromJNI()
         LoadAsync().execute()
 
         swiperefresh?.setOnRefreshListener {
@@ -43,21 +47,34 @@ class Main : AppCompatActivity() {
         DrawerBuilder().withActivity(this).build()
 
         // Handle Toolbar
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        val dtoolbar = findViewById<View>(R.id.toolbar) as Toolbar
        // toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(dtoolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeButtonEnabled(true)
-    //    supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-        val item1 = PrimaryDrawerItem().withIdentifier(1).withName("Home")
+        drawer {
+            primaryItem("Home") {  }
+            primaryItem("Temperature") {
+                onClick {_ ->
+                    false
+            }
+            }
+            divider {  }
+            toolbar = this@Main.toolbar
+        }
 
-        val result = DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(toolbar)
-                .addDrawerItems(
-                        item1
-                )
-                .build()
+    //    supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+//        val item1 = PrimaryDrawerItem().withIdentifier(1).withName("Home")
+//
+//        val result = DrawerBuilder()
+//                .withActivity(this)
+//                .withToolbar(toolbar)
+//                .addDrawerItems(
+//                        item1
+//                )
+//                .build()
+
+       // result.setOnDrawerItemLongClickListener()
        // result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
         //layoutInflater: LayoutInflater
@@ -108,7 +125,7 @@ class Main : AppCompatActivity() {
                 lastHumidity.text = String.format(resources.getString(R.string.humidity), result.humidity)
                 lastTemperature.text = String.format(resources.getString(R.string.temperature), result.temperature)
                 val df = SimpleDateFormat("MM/dd/yyyy HH:mm")
-                sample_text.text = String.format(resources.getString(R.string.last_date), df.format(result.created_at))
+                dateText.text = String.format(resources.getString(R.string.last_date), df.format(result.created_at))
                 swiperefresh.isRefreshing = false
             }
         }
