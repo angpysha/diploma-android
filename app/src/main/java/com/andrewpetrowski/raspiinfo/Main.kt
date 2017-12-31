@@ -1,6 +1,7 @@
 package com.andrewpetrowski.raspiinfo
 
 import android.content.Context
+import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -26,58 +27,50 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 
 
-
-
-
-
 class Main : AppCompatActivity() {
 
+    private lateinit var result: Drawer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Example of a call to a native method
-       // sample_text.text = stringFromJNI()
         LoadAsync().execute()
 
         swiperefresh?.setOnRefreshListener {
             LoadAsync().execute()
         }
 
-        DrawerBuilder().withActivity(this).build()
-
         // Handle Toolbar
         val dtoolbar = findViewById<View>(R.id.toolbar) as Toolbar
-       // toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp)
         setSupportActionBar(dtoolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeButtonEnabled(true)
-        drawer {
-            primaryItem("Home") {  }
-            primaryItem("Temperature") {
-                onClick {_ ->
+        result = drawer {
+            savedInstance = savedInstanceState
+            closeOnClick = false
+            primaryItem("Home") {
+                identifier = 1
+                selected = true
+                onClick { _ ->
+                    result?.closeDrawer()
                     false
+                }
             }
+            primaryItem("Temperature") {
+                identifier = 2
+                onClick { _ ->
+                    val intent: Intent = Intent(this@Main, TemperatureActivity::class.java)
+                    startActivity(intent)
+                    result?.closeDrawer()
+                    //result?.setSelection(2)
+                    false
+
+                }
             }
-            divider {  }
+            divider { }
             toolbar = this@Main.toolbar
         }
-
-    //    supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-//        val item1 = PrimaryDrawerItem().withIdentifier(1).withName("Home")
-//
-//        val result = DrawerBuilder()
-//                .withActivity(this)
-//                .withToolbar(toolbar)
-//                .addDrawerItems(
-//                        item1
-//                )
-//                .build()
-
-       // result.setOnDrawerItemLongClickListener()
-       // result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
-
-        //layoutInflater: LayoutInflater
+        
     }
 
 
