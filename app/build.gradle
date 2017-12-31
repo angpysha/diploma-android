@@ -72,4 +72,9 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:26.1.0"
     implementation "com.android.support:support-annotations:26.1.0"
     implementation "com.android.support:design:26.1.0"
+    implementation 'com.jjoe64:graphview:4.2.1'
+    implementation ('com.wdullaer:materialdatetimepicker:3.5.0') {
+        exclude group: 'com.android.support'
+    }
+    implementation 'com.android.support:animated-vector-drawable:26.1.0'
 }
