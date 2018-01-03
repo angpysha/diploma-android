@@ -23,7 +23,7 @@ android {
     defaultConfig {
        // useLibrary 'org.apache.http.legacy'
         applicationId "com.andrewpetrowski.raspiinfo"
-        minSdkVersion 19
+        minSdkVersion 20
         targetSdkVersion 26
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
