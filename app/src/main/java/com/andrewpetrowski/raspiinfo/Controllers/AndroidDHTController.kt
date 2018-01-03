@@ -10,8 +10,8 @@ import java.util.*
  * Created by andre on 30.12.2017.
  */
 
-class TemperatureController() {
-    fun GetByDate(date: Date): List<Temperature>? {
+class AndroidDHTController {
+    fun GetByDate(date: Date): List<DHT11_Data> {
         var calendar = Calendar.getInstance()
 
 
@@ -21,12 +21,12 @@ class TemperatureController() {
 
         var filter = DhtSearch(date,dayAfter,null,null, null,null)
 
-        var result = DhtController().SearchAsync(filter,DHT11_Data::class.java).get()
+        var rest: List<DHT11_Data> = DhtController().SearchAsync(filter,DHT11_Data::class.java).get()
 
-        val data = result.mapTo(LinkedList<Temperature>()) { it -> Temperature(it.temperature,it.created_at) }
-
-        return data
+        return rest
     }
+
+
 
 
 }
