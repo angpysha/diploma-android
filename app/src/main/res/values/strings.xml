@@ -5,4 +5,5 @@
     <string name="temperature">%03.1f°C</string>
     <string name="humidity">%03.1f%%</string>
     <string name="last_date">Last sensors data at \n %s</string>
+    <string name="temperature_header">Temperature graph at \n %s</string>
 </resources>
