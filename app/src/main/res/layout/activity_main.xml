@@ -41,7 +41,11 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/constrait_main"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        >
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -54,9 +58,7 @@
             <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/backgroundMain"
-                >
+                android:layout_height="match_parent">
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/constraintLayout3"
@@ -65,11 +67,11 @@
                     android:layout_marginBottom="15dp"
                     android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="68dp"
+                    android:layout_marginTop="15dp"
                     android:background="@drawable/bordered"
                     app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_bias="0.533"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -81,7 +83,7 @@
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/alef"
+                        android:fontFamily="@font/exo_2"
                         android:text="TextView"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -114,7 +116,7 @@
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="16dp"
-                        android:fontFamily="@font/alef"
+                        android:fontFamily="@font/exo_2"
                         android:text="@string/last_temperature"
                         android:textAlignment="center"
                         android:textSize="16sp"
@@ -131,15 +133,52 @@
                         android:layout_marginBottom="80dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="16dp"
+                        android:fontFamily="@font/exo_2_medium"
                         android:text="TextView"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/value_text_size"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.475"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/lastTempemperatureLabel"
-                        app:layout_constraintVertical_bias="1.0" />
+                        app:layout_constraintVertical_bias="0.263" />
+
+                    <TextView
+                        android:id="@+id/maxTemperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/exo_2_light"
+                        android:text="textView"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/lastTemperature"
+                        app:layout_constraintVertical_bias="0.9" />
+
+                    <TextView
+                        android:id="@+id/minTemperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/exo_2_light"
+                        android:text="TextView"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/lastTemperature"
+                        app:layout_constraintVertical_bias="0.905" />
                 </android.support.constraint.ConstraintLayout>
 
                 <android.support.constraint.ConstraintLayout
@@ -164,7 +203,7 @@
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/alef"
+                        android:fontFamily="@font/exo_2"
                         android:text="@string/last_humidity"
                         android:textAlignment="center"
                         android:textSize="16sp"
@@ -181,6 +220,7 @@
                         android:layout_marginBottom="80dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="16dp"
+                        android:fontFamily="@font/exo_2_medium"
                         android:text="TextView"
                         android:textColor="@color/colorPrimary"
                         android:textSize="40sp"
@@ -188,7 +228,45 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/lastHumidityLabel"
-                        app:layout_constraintVertical_bias="0.58000004" />
+                        app:layout_constraintVertical_bias="0.26" />
+
+                    <TextView
+                        android:id="@+id/maxHumidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/exo_2_light"
+                        android:text="TextView"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/lastHumidity"
+                        app:layout_constraintVertical_bias="0.9" />
+
+                    <TextView
+                        android:id="@+id/minHumidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/exo_2_light"
+                        android:text="TextView"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.934"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/lastHumidity"
+                        app:layout_constraintVertical_bias="0.9" />
                 </android.support.constraint.ConstraintLayout>
 
 
