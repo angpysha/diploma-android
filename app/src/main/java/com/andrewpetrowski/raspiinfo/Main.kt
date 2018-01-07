@@ -22,6 +22,7 @@ import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.multidex.MultiDex
+import android.support.v4.view.LayoutInflaterCompat
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
@@ -32,6 +33,13 @@ import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
 import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
 import com.andrewpetrowski.diploma.bridgelib.Models.DHT11_Data
+import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
+import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
+import com.mikepenz.fontawesome_typeface_library.FontAwesome
+import com.mikepenz.fontawesome_typeface_library.FontAwesome.Icon.faw_home
+import com.mikepenz.iconics.Iconics
+import com.mikepenz.iconics.context.IconicsLayoutInflater
+import com.mikepenz.iconics.context.IconicsLayoutInflater2
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,6 +55,7 @@ class Main : AppCompatActivity() {
 
     private lateinit var result: Drawer
     override fun onCreate(savedInstanceState: Bundle?) {
+        LayoutInflaterCompat.setFactory2(layoutInflater, IconicsLayoutInflater2(delegate))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -64,28 +73,48 @@ class Main : AppCompatActivity() {
         result = drawer {
             savedInstance = savedInstanceState
             closeOnClick = false
-            primaryItem("Home") {
+            headerViewRes = R.layout.drawer_header
+
+            primaryItem(resources.getString(R.string.drawer_home)) {
                 identifier = 1
                 selected = true
+                iicon = FontAwesome.Icon.faw_home
                 onClick { _ ->
                     result?.closeDrawer()
                     false
                 }
             }
-            primaryItem("Temperature") {
+            primaryItem(resources.getString(R.string.drawer_temperature)) {
                 identifier = 2
+                iicon = FontAwesome.Icon.faw_thermometer_half
                 onClick { _ ->
                     val intent: Intent = Intent(this@Main, TemperatureActivity::class.java)
                     startActivity(intent)
                     result?.closeDrawer()
+
                     //result?.setSelection(2)
                     false
 
                 }
             }
+
+            primaryItem(resources.getString(R.string.drawer_humidity)) {
+                identifier = 3
+                iicon = FontAwesome.Icon.faw_tint
+                onClick { _ ->
+                    val intent: Intent = Intent(this@Main,Humidity::class.java)
+                    startActivity(intent)
+                    result?.closeDrawer()
+                    false
+                }
+            }
             divider { }
             toolbar = this@Main.toolbar
         }
+
+        result!!.setSelection(1)
+
+        LoadMaxMin().execute()
         
     }
 
@@ -117,6 +146,7 @@ class Main : AppCompatActivity() {
 
                 dhtData = dhtController.GetLast(DHT11_Data::class.java)
 
+
                 //      val dhtData: DHT11_Data = DHT11_Data(23f, 48f)
 
                 return dhtData
@@ -138,7 +168,33 @@ class Main : AppCompatActivity() {
                 swiperefresh.isRefreshing = false
             }
         }
+    }
 
+    inner class LoadMaxMin : AsyncTask<Void,Void,AndroidDHTController.MaxMin>() {
+        override fun doInBackground(vararg params: Void): AndroidDHTController.MaxMin {
+            val controller = AndroidDHTController()
 
+            var data = controller.GetMaxMin(Date().zeroTime())
+
+            return data
+        }
+
+        override fun onPostExecute(result: AndroidDHTController.MaxMin?) {
+            super.onPostExecute(result)
+
+            result!!.let {
+                val maxT = result!!.maxT
+                val minT = result!!.minT
+
+                val maxH = result!!.maxH
+                val minH = result!!.minH
+
+                maxTemperature!!.text = String.format(resources.getString(R.string.maximum_temperature),maxT)
+                minTemperature!!.text = String.format(resources.getString(R.string.minimum_temperature),minT)
+
+                maxHumidity!!.text = String.format(resources.getString(R.string.maximum_humidity),maxH)
+                minHumidity!!.text = String.format(resources.getString(R.string.minimum_humidity),minH)
+            }
+        }
     }
 }
