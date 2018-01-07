@@ -2,5 +2,8 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/alef</item>
+        <item>@font/exo_2</item>
+        <item>@font/exo_2_light</item>
+        <item>@font/exo_2_medium</item>
     </array>
 </resources>
