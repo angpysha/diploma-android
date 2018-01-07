@@ -17,5 +17,26 @@ fun Date.zeroTime() : Date {
     return calendar.time
 }
 
+fun Date.Increment() : Date {
+    var calendar = Calendar.getInstance()
 
+    calendar.time = this
+
+    calendar.add(Calendar.DATE,1)
+
+    if (calendar.time.zeroTime() > Date().zeroTime())
+        return Date()
+
+    return calendar.time
+}
+
+fun Date.Decrement() : Date {
+    var calendar = Calendar.getInstance()
+
+    calendar.time = this
+
+    calendar.add(Calendar.DATE,-1)
+
+    return calendar.time
+}
 
