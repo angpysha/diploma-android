@@ -1,5 +1,7 @@
 package com.andrewpetrowski.raspiinfo.Helpers
 
+import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -38,5 +40,23 @@ fun Date.Decrement() : Date {
     calendar.add(Calendar.DATE,-1)
 
     return calendar.time
+}
+
+fun Date.toFormatedString() :String{
+    val df  = SimpleDateFormat("MM-dd-yyyy HH:mm:ss")
+    return df.format(this)
+}
+
+fun String.toDate() : Date {
+    val df  = SimpleDateFormat("MM-dd-yyyy HH:mm:ss")
+    return df.parse(this)
+}
+
+fun checkAvailable(date: Date) : Boolean {
+    val dhtcon = AndroidDHTController()
+
+    val data = dhtcon.GetByDate(date.zeroTime())
+
+    return data?.isNotEmpty()?:false
 }
 
