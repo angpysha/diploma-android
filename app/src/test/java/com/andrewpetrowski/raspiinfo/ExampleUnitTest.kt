@@ -1,5 +1,6 @@
 package com.andrewpetrowski.raspiinfo
 
+import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
 import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
 import org.junit.Test
@@ -44,6 +45,15 @@ class ExampleUnitTest {
         {
             ex.printStackTrace()
         }
+    }
+
+    @Test
+    fun TestDatesCount() {
+        val contr = DhtController()
+
+        val c = contr.GetDatesCount()
+
+        assertEquals(c,20)
     }
 
 }
