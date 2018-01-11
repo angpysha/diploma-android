@@ -19,18 +19,28 @@ package com.andrewpetrowski.raspiinfo.Adapters
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import com.andrewpetrowski.raspiinfo.Models.PageDatePair
+import com.andrewpetrowski.raspiinfo.TemperatureFragment
 
 /**
  * Created by andre on 07.01.2018.
  */
 
-class TemperatureFragmentAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+class TemperatureFragmentAdapter(fragmentManager: FragmentManager, size:Int) : FragmentPagerAdapter(fragmentManager) {
+    private var size: Int = 0
+   // private lateinit var pair : PageDatePair
+    init {
+        this.size = size
+      //  pair = PageDatePair(count)
+
+    }
+
     override fun getItem(position: Int): Fragment {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+       return TemperatureFragment.newInstance(PageDatePair.GetDate(position,size))
     }
 
     override fun getCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return size
     }
 
 }
