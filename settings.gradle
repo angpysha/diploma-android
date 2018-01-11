@@ -1,1 +1,1 @@
-include ':app', ':com.andrewpetrowski.diploma.bridgelib-0.1', ':unirest-java'
+include ':app', ':unirest-java'
