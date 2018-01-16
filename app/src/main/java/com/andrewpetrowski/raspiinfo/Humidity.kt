@@ -16,6 +16,7 @@
 
 package com.andrewpetrowski.raspiinfo
 
+import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -23,14 +24,13 @@ import android.os.Bundle
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
-import com.andrewpetrowski.diploma.bridgelib.Models.DHT11_Data
-import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
-import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
+import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
+import com.andrewpetrowski.raspiinfo.Adapters.HumidityFragmentAdapter
+import com.andrewpetrowski.raspiinfo.Adapters.TemperatureFragmentAdapter
+import com.andrewpetrowski.raspiinfo.Models.FragmentAdapterParams
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
 import kotlinx.android.synthetic.main.activity_humidity.*
-import kotlinx.android.synthetic.main.activity_temperature.*
-import java.util.*
 
 class Humidity : AppCompatActivity() {
 
@@ -82,20 +82,51 @@ class Humidity : AppCompatActivity() {
         }
 
         result!!.setSelection(3)
-    }
+        val _size = LoadSize(this).execute().get()
+//        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
+        val adapter = HumidityFragmentAdapter(supportFragmentManager, _size)
 
-    inner class LoadAsync: AsyncTask<Date,Void,List<DHT11_Data>>() {
-        override fun doInBackground(vararg params: Date?): List<DHT11_Data> {
-            val temperatureContorller = AndroidDHTController()
-
-            val date: Date = params[0]!!.zeroTime()
-            var data = temperatureContorller.GetByDate(date).sortedBy { it.created_at }
-            return data
-        }
-
-        override fun onPostExecute(result: List<DHT11_Data>?) {
-            super.onPostExecute(result)
-        }
+        pager_humidity!!.adapter = adapter
+        pager_humidity!!.currentItem = _size-1
 
     }
+
+    inner class LoadSize(context: Context) : AsyncTask<Void, Void, Int>() {
+        private lateinit var context: Context
+
+        init {
+            this.context = context
+        }
+
+        override fun doInBackground(vararg params: Void?): Int {
+            val dht = DhtController()
+            val size = dht.GetDatesCount()
+            return size
+        }
+
+    }
+
+    inner class GetAdapter : AsyncTask<FragmentAdapterParams, Void, TemperatureFragmentAdapter>() {
+        override fun doInBackground(vararg params: FragmentAdapterParams?): TemperatureFragmentAdapter {
+            val param = params[0]
+
+            return TemperatureFragmentAdapter(param!!.manager, param!!.size)
+        }
+
+    }
+
+//    inner class LoadAsync: AsyncTask<Date,Void,List<DHT11_Data>>() {
+//        override fun doInBackground(vararg params: Date?): List<DHT11_Data> {
+//            val temperatureContorller = AndroidDHTController()
+//
+//            val date: Date = params[0]!!.zeroTime()
+//            var data = temperatureContorller.GetByDate(date).sortedBy { it.created_at }
+//            return data
+//        }
+//
+//        override fun onPostExecute(result: List<DHT11_Data>?) {
+//            super.onPostExecute(result)
+//        }
+//
+//    }
 }
