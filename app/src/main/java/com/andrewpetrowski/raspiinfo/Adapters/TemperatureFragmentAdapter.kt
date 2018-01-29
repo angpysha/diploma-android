@@ -26,7 +26,7 @@ import com.andrewpetrowski.raspiinfo.TemperatureFragment
  * Created by andre on 07.01.2018.
  */
 
-class TemperatureFragmentAdapter(fragmentManager: FragmentManager, size:Int) : FragmentPagerAdapter(fragmentManager) {
+class TemperatureFragmentAdapter(fragmentManager: FragmentManager, size:Int) : FragmentStatePagerAdapter(fragmentManager) {
     private var size: Int = 0
    // private lateinit var pair : PageDatePair
     init {

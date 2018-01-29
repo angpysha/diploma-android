@@ -19,6 +19,7 @@ package com.andrewpetrowski.raspiinfo.Adapters
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
 import com.andrewpetrowski.raspiinfo.Humidity
 import com.andrewpetrowski.raspiinfo.HumidityFragment
 import com.andrewpetrowski.raspiinfo.Models.PageDatePair
@@ -28,7 +29,7 @@ import com.andrewpetrowski.raspiinfo.TemperatureFragment
  * Created by andre on 12.01.2018.
  */
 
-class HumidityFragmentAdapter(fragmentManager: FragmentManager, size:Int) : FragmentPagerAdapter(fragmentManager) {
+class HumidityFragmentAdapter(fragmentManager: FragmentManager, size:Int) : FragmentStatePagerAdapter(fragmentManager) {
     private var size: Int = 0
     // private lateinit var pair : PageDatePair
     init {
