@@ -1,8 +1,7 @@
 package com.andrewpetrowski.raspiinfo.Controllers
 
-import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
-import com.andrewpetrowski.diploma.bridgelib.Models.DhtSearch
-import com.andrewpetrowski.diploma.bridgelib.Models.Entity
+
+import android.content.Entity
 import com.andrewpetrowski.raspiinfo.Models.BasicModel
 import java.util.*
 
@@ -10,7 +9,7 @@ import java.util.*
  * Created by andre on 30.12.2017.
  */
 
-abstract class BaseController<T : BasicModel>() {
+abstract class BaseController<T : Entity>() {
 
 //    fun GetByDate(date: Date,className: Class<out Entity>): List<T> {
 //        var calendar = Calendar.getInstance()
