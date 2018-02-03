@@ -31,10 +31,10 @@ import co.zsmb.materialdrawerkt.builders.DrawerBuilderKt
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
-import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
-import com.andrewpetrowski.diploma.bridgelib.Models.DHT11_Data
+import com.andrewpetrowski.raspiinfo.Controllers.AndroidBMPController
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
 import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
+import com.andrewpetrowski.raspiinfo.Models.PressureDataClass
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.fontawesome_typeface_library.FontAwesome.Icon.faw_home
 import com.mikepenz.iconics.Iconics
@@ -49,6 +49,10 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
+import io.github.angpysha.diploma_bridge.Controllers.BmpController
+import io.github.angpysha.diploma_bridge.Controllers.DhtController
+import io.github.angpysha.diploma_bridge.Models.Bmp180_Data
+import io.github.angpysha.diploma_bridge.Models.DHT11_Data
 
 
 class Main : AppCompatActivity() {
@@ -108,13 +112,26 @@ class Main : AppCompatActivity() {
                     false
                 }
             }
+
+            primaryItem(resources.getString(R.string.drawer_pressure)) {
+                identifier = 4
+                iicon = FontAwesome.Icon.faw_tachometer
+                onClick { _ ->
+                    val intent: Intent = Intent(this@Main,Pressure::class.java)
+                    startActivity(intent)
+                    result?.closeDrawer()
+                    false
+                }
+
+            }
             divider { }
             toolbar = this@Main.toolbar
         }
 
         result!!.setSelection(1)
 
-        LoadMaxMin().execute()
+//        LoadMaxMin().execute()
+        LoadPressure().execute()
         
     }
 
@@ -195,6 +212,21 @@ class Main : AppCompatActivity() {
                 maxHumidity!!.text = String.format(resources.getString(R.string.maximum_humidity),maxH)
                 minHumidity!!.text = String.format(resources.getString(R.string.minimum_humidity),minH)
             }
+        }
+    }
+
+    inner class LoadPressure: AsyncTask<Void,Void,PressureDataClass>() {
+        override fun doInBackground(vararg params: Void?): PressureDataClass {
+            val controller = AndroidBMPController()
+
+            return controller.GetMaxMinLast(Date().zeroTime())
+        }
+
+        override fun onPostExecute(result: PressureDataClass?) {
+            super.onPostExecute(result)
+            lastPressure!!.text = String.format(resources.getString(R.string.pressure),result!!.pressure/1000f)
+            minPressure!!.text = String.format(resources.getString(R.string.min_pressure),result.minPressure/1000f)
+            maxPressure!!.text = String.format(resources.getString(R.string.max_pressure),result.minPressure/1000f)
         }
     }
 }
