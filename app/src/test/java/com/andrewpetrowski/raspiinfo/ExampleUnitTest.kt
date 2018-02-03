@@ -1,8 +1,11 @@
 package com.andrewpetrowski.raspiinfo
 
-import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
 import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
+import io.github.angpysha.diploma_bridge.Controllers.DhtController
+import io.github.angpysha.diploma_bridge.Models.DHT11_Data
+import io.github.angpysha.diploma_bridge.Models.DhtSearch
+import io.github.angpysha.diploma_bridge.Models.DisplayPeriod
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -54,6 +57,28 @@ class ExampleUnitTest {
         val c = contr.GetDatesCount()
 
         assertEquals(c,20)
+    }
+
+    @Test
+    fun TestGetWeeks() {
+        var calendar = Calendar.getInstance()
+
+        var controller = AndroidDHTController()
+
+        var data = controller.GetByDate(calendar.time,1)
+
+        var i =0
+    }
+
+    @Test
+    fun TestWeeksLib() {
+        var date = Date().zeroTime()
+
+        var controller = DhtController()
+
+        var data = controller.GetByPeriod(date,DisplayPeriod.WEEK,DHT11_Data::class.java,DhtSearch::class.java)
+
+        var i =0
     }
 
 }

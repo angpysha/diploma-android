@@ -1,10 +1,10 @@
 package com.andrewpetrowski.raspiinfo
 
 import android.support.test.runner.AndroidJUnit4
-import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
-import com.andrewpetrowski.diploma.bridgelib.Models.DHT11_Data
-import com.andrewpetrowski.diploma.bridgelib.Models.DhtSearch
 import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
+import io.github.angpysha.diploma_bridge.Controllers.DhtController
+import io.github.angpysha.diploma_bridge.Models.DHT11_Data
+import io.github.angpysha.diploma_bridge.Models.DhtSearch
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.*
@@ -34,7 +34,7 @@ import java.util.*
                     null,null)
 
 
-            val data = controller.Search(filter,DHT11_Data::class.java)
+            val data = controller.Search(filter, DHT11_Data::class.java)
 
             val i = 0
         } catch (ex: Exception) {
