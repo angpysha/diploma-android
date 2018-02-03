@@ -31,6 +31,7 @@ import com.andrewpetrowski.raspiinfo.TemperatureFragment
 
 class HumidityFragmentAdapter(fragmentManager: FragmentManager, size:Int) : FragmentStatePagerAdapter(fragmentManager) {
     private var size: Int = 0
+    private var type = 0
     // private lateinit var pair : PageDatePair
     init {
         this.size = size
@@ -38,10 +39,15 @@ class HumidityFragmentAdapter(fragmentManager: FragmentManager, size:Int) : Frag
 
     }
 
+    constructor(fragmentManager: FragmentManager, size:Int,type: Int) : this(fragmentManager,size) {
+        this.type = type
+    }
     override fun getItem(position: Int): Fragment {
-        return HumidityFragment.newInstance(PageDatePair.GetDate(position,size))
+        return HumidityFragment.newInstance(position,type,size)
 
     }
+
+
 
     override fun getCount(): Int {
         return size

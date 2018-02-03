@@ -19,6 +19,7 @@ package com.andrewpetrowski.raspiinfo.Adapters
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
 import com.andrewpetrowski.raspiinfo.Models.PageDatePair
 import com.andrewpetrowski.raspiinfo.TemperatureFragment
 
@@ -28,6 +29,7 @@ import com.andrewpetrowski.raspiinfo.TemperatureFragment
 
 class TemperatureFragmentAdapter(fragmentManager: FragmentManager, size:Int) : FragmentStatePagerAdapter(fragmentManager) {
     private var size: Int = 0
+    private var type: Int = 0
    // private lateinit var pair : PageDatePair
     init {
         this.size = size
@@ -35,8 +37,13 @@ class TemperatureFragmentAdapter(fragmentManager: FragmentManager, size:Int) : F
 
     }
 
+    constructor(fragmentManager: FragmentManager, size:Int,type: Int) : this(fragmentManager,size) {
+        this.type = type
+    }
+
+
     override fun getItem(position: Int): Fragment {
-       return TemperatureFragment.newInstance(PageDatePair.GetDate(position,size))
+       return TemperatureFragment.newInstance(position,type,size)
     }
 
     override fun getCount(): Int {
