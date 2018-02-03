@@ -21,18 +21,73 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
-import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
 import com.andrewpetrowski.raspiinfo.Adapters.HumidityFragmentAdapter
 import com.andrewpetrowski.raspiinfo.Adapters.TemperatureFragmentAdapter
+import com.andrewpetrowski.raspiinfo.Helpers.Additionals
 import com.andrewpetrowski.raspiinfo.Models.FragmentAdapterParams
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
+import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import kotlinx.android.synthetic.main.activity_humidity.*
+import kotlinx.android.synthetic.main.activity_temperature.*
 
-class Humidity : AppCompatActivity() {
+class Humidity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        when (position) {
+            0 -> {
+                val _size = LoadSize(this).execute(0).get()
+//        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
+                val adapter = HumidityFragmentAdapter(supportFragmentManager, _size)
+
+                pager_humidity!!.adapter = adapter
+                pager_humidity!!.currentItem = _size - 1
+
+                spinner_humidity!!.onItemSelectedListener = this
+            }
+
+            1 -> {
+                val _size = LoadSize(this).execute(1).get()
+//        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
+                val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 1)
+
+                pager_humidity!!.adapter = adapter
+                pager_humidity!!.currentItem = _size - 1
+
+                spinner_humidity!!.onItemSelectedListener = this
+            }
+
+            2 -> {
+                val _size = LoadSize(this).execute(2).get()
+//        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
+                val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 2)
+
+                pager_humidity!!.adapter = adapter
+                pager_humidity!!.currentItem = _size - 1
+
+                spinner_humidity!!.onItemSelectedListener = this
+            }
+            3 -> {
+                val _size = LoadSize(this).execute(3).get()
+//        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
+                val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 3)
+
+                pager_humidity!!.adapter = adapter
+                pager_humidity!!.currentItem = _size - 1
+
+                spinner_humidity!!.onItemSelectedListener = this
+            }
+        }
+    }
 
     private lateinit var result: Drawer
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,30 +132,73 @@ class Humidity : AppCompatActivity() {
                     false
                 }
             }
+            primaryItem(resources.getString(R.string.drawer_pressure)) {
+                identifier = 4
+                iicon = FontAwesome.Icon.faw_tachometer
+                onClick { _ ->
+                    val intent: Intent = Intent(this@Humidity,Pressure::class.java)
+                    startActivity(intent)
+                    result?.closeDrawer()
+                    false
+                }
+
+            }
             divider { }
             toolbar = this@Humidity.toolbar_h
         }
 
         result!!.setSelection(3)
-        val _size = LoadSize(this).execute().get()
-//        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
-        val adapter = HumidityFragmentAdapter(supportFragmentManager, _size)
+//        val _size = LoadSize(this).execute().get()
+////        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
+//        val adapter = HumidityFragmentAdapter(supportFragmentManager, _size)
+//
+//        pager_humidity!!.adapter = adapter
+//        pager_humidity!!.currentItem = _size-1
+        val spinner_adapter: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(this,
+                R.array.spinner_filter, android.R.layout.simple_spinner_item)
 
-        pager_humidity!!.adapter = adapter
-        pager_humidity!!.currentItem = _size-1
+        spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
+        spinner_humidity!!.adapter = spinner_adapter
+        spinner_humidity!!.onItemSelectedListener = this
     }
 
-    inner class LoadSize(context: Context) : AsyncTask<Void, Void, Int>() {
+    inner class LoadSize(context: Context) : AsyncTask<Int, Void, Int>() {
         private lateinit var context: Context
 
         init {
             this.context = context
         }
 
-        override fun doInBackground(vararg params: Void?): Int {
-            val dht = DhtController()
-            val size = dht.GetDatesCount()
+        override fun doInBackground(vararg params: Int?): Int {
+            var size = 0
+            when (params[0]) {
+                0 -> {
+                    val dht = DhtController()
+                    size = dht.GetDatesCount()
+                }
+
+                1 -> {
+                    val dht = DhtController()
+                    val dates = dht.GetMinMaxDate()
+
+                    size = Additionals.WeeksDiff(dates[0],dates[1])+1
+                }
+
+                2 -> {
+                    val dht = DhtController()
+                    val dates = dht.GetMinMaxDate()
+
+                    size = Additionals.MonthDiff(dates[0],dates[1])+1
+                }
+
+                3 -> {
+                    val dht = DhtController()
+                    val dates = dht.GetMinMaxDate()
+
+                    size = Additionals.YearsDiff(dates[0],dates[1])+1
+                }
+            }
             return size
         }
 

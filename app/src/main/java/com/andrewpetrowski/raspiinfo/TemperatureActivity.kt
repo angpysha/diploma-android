@@ -16,16 +16,18 @@
 
 package com.andrewpetrowski.raspiinfo
 
-import android.app.FragmentManager
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
-import com.andrewpetrowski.diploma.bridgelib.Controllers.DhtController
 import com.andrewpetrowski.raspiinfo.Adapters.TemperatureFragmentAdapter
 import com.andrewpetrowski.raspiinfo.Models.FragmentAdapterParams
 import com.github.pwittchen.swipe.library.rx2.Swipe
@@ -34,9 +36,51 @@ import kotlinx.android.synthetic.main.activity_temperature.*
 import java.util.*
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
+import io.github.angpysha.diploma_bridge.Controllers.DhtController
+import io.github.angpysha.diploma_bridge.Decorators.DateEx
+import com.andrewpetrowski.raspiinfo.Helpers.Additionals
 
+class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener {
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
-class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DatePickerDialog.OnDateSetListener {
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        Log.d("Selected", position.toString())
+
+        when (position) {
+            0 -> {
+                val _size = LoadSize(this).execute(0).get()
+//        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size)
+
+                pager_temperature!!.adapter = adapter
+                pager_temperature!!.currentItem = _size - 1
+            }
+            1 -> {
+                val _size = LoadSize(this).execute(1).get()
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size, 1)
+
+                pager_temperature!!.adapter = adapter
+                pager_temperature!!.currentItem = _size - 1
+
+            }
+            2 -> {
+                val _size = LoadSize(this).execute(2).get()
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size, 2)
+
+                pager_temperature!!.adapter = adapter
+                pager_temperature!!.currentItem = _size - 1
+
+            }
+            3 -> {
+                val _size = LoadSize(this).execute(3).get()
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size, 3)
+                pager_temperature!!.adapter = adapter
+                pager_temperature!!.currentItem = _size - 1
+            }
+        }
+    }
 
     override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
         var calendar = Calendar.getInstance()
@@ -93,19 +137,38 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
                     false
                 }
             }
+            primaryItem(resources.getString(R.string.drawer_pressure)) {
+                identifier = 4
+                iicon = FontAwesome.Icon.faw_tachometer
+                onClick { _ ->
+                    val intent: Intent = Intent(this@TemperatureActivity,Pressure::class.java)
+                    startActivity(intent)
+                    result?.closeDrawer()
+                    false
+                }
+
+            }
             divider { }
             toolbar = this@TemperatureActivity.toolbar_d
         }
 
         result?.setSelection(2)
 
-        val _size = LoadSize(this).execute().get()
-//        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
-        val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size)
+//        val _size = LoadSize(this).execute().get()
+////        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
+//        val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size)
+//
+//        pager_temperature!!.adapter = adapter
+//        pager_temperature!!.currentItem = _size - 1
 
-        pager_temperature!!.adapter = adapter
-        pager_temperature!!.currentItem = _size - 1
+        var spinner_adapter: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(this,
+                R.array.spinner_filter, android.R.layout.simple_spinner_item)
 
+        spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinner_temperaure!!.adapter = spinner_adapter
+        spinner_temperaure!!.onItemSelectedListener = this
+        // spinner_temperaure
     }
 
     fun setChart() {
@@ -113,16 +176,42 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
     }
 
 
-    inner class LoadSize(context: Context) : AsyncTask<Void, Void, Int>() {
+    inner class LoadSize(context: Context) : AsyncTask<Int, Void, Int>() {
         private lateinit var context: Context
 
         init {
             this.context = context
         }
 
-        override fun doInBackground(vararg params: Void?): Int {
-            val dht = DhtController()
-            val size = dht.GetDatesCount()
+        override fun doInBackground(vararg params: Int?): Int {
+            var size = 0
+            when (params[0]) {
+                0 -> {
+                    val dht = DhtController()
+                    size = dht.GetDatesCount()
+                }
+
+                1 -> {
+                    val dht = DhtController()
+                    val dates = dht.GetMinMaxDate()
+
+                    size = Additionals.WeeksDiff(dates[0],dates[1])+1
+                }
+
+                2 -> {
+                    val dht = DhtController()
+                    val dates = dht.GetMinMaxDate()
+
+                    size = Additionals.MonthDiff(dates[0],dates[1])+1
+                }
+
+                3 -> {
+                    val dht = DhtController()
+                    val dates = dht.GetMinMaxDate()
+
+                    size = Additionals.YearsDiff(dates[0],dates[1])+1
+                }
+            }
             return size
         }
 
