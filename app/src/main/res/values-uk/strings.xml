@@ -30,7 +30,12 @@
     <string name="humidity_title">Графік вологості</string>
     <string name="maximum_temperature">Максимум: %03.1f°C</string>
     <string name="minimum_temperature">Мінімум: %03.1f°C</string>
-    <string name="maximum_humidity">Максимум: %03.1f%%</string>
-    <string name="minimum_humidity">Мінімум: %03.1f%%</string>
+    <string name="maximum_humidity">Макс: %03.1f%%</string>
+    <string name="minimum_humidity">Мін: %03.1f%%</string>
     <string name="last_temperature">"Температура: "</string>
+    <string name="max_pressure">Макс: %03.1f кПа</string>
+    <string name="min_pressure">Мін: %03.1f кПа</string>
+    <string name="last_pressure">Тиск:</string>
+    <string name="pressure">%03.1f кПа</string>
+    <string name="drawer_pressure">Тиск</string>
 </resources>

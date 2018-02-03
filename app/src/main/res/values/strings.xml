@@ -27,12 +27,18 @@
     <string name="drawer_humidity">Humidity</string>
     <string name="temperature_title">Temperatures graph</string>
     <string name="humidity_title">Humidities graph</string>
-    <string name="maximum_temperature">Maximal: %03.1f°C</string>
-    <string name="minimum_temperature">Maximal: %03.1f°C</string>
-    <string name="maximum_humidity">Maximal: %03.1f%%</string>
-    <string name="minimum_humidity">Minimal: %03.1f%%</string>
+    <string name="maximum_temperature">Max: %03.1f°C</string>
+    <string name="minimum_temperature">Max: %03.1f°C</string>
+    <string name="maximum_humidity">Max: %03.1f%%</string>
+    <string name="minimum_humidity">Min: %03.1f%%</string>
     <string name="last_temperature">Temperature:</string>
-
+    <string name="last_pressure">Pressure: </string>
+    <string name="max_pressure">Max: %03.1f kPa</string>
+    <string name="min_pressure">Min: %03.1f kPa</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pressure">%03.1f kPa</string>
+    <string name="drawer_pressure">Pressure</string>
+    <string name="pressure_title">Pressures graph</string>
+    <string name="pressure_header">Pressure graph at \n %s</string>
 </resources>
