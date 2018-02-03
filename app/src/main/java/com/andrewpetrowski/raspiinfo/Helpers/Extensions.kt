@@ -1,6 +1,8 @@
 package com.andrewpetrowski.raspiinfo.Helpers
 
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
+import org.joda.time.DateTime
+import org.joda.time.Weeks
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -16,6 +18,19 @@ fun Date.zeroTime() : Date {
     calendar.set(Calendar.SECOND,0)
     calendar.set(Calendar.MINUTE,0)
     calendar.set(Calendar.HOUR_OF_DAY,0)
+    return calendar.time
+}
+
+
+
+fun Date.fullTime() : Date {
+    val calendar: Calendar = Calendar.getInstance()
+    calendar.time = this
+
+    calendar.set(Calendar.SECOND,59)
+    calendar.set(Calendar.MINUTE,59)
+    calendar.set(Calendar.HOUR_OF_DAY,23)
+
     return calendar.time
 }
 
@@ -58,5 +73,9 @@ fun checkAvailable(date: Date) : Boolean {
     val data = dhtcon.GetByDate(date.zeroTime())
 
     return data?.isNotEmpty()?:false
+}
+
+fun <T> List<out T>.getLast(): T {
+    return this[this.size-1]
 }
 
