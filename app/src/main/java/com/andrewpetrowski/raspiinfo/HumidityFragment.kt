@@ -24,18 +24,21 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.andrewpetrowski.diploma.bridgelib.Models.DHT11_Data
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
-import com.andrewpetrowski.raspiinfo.Helpers.toDate
-import com.andrewpetrowski.raspiinfo.Helpers.toFormatedString
-import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
+import com.andrewpetrowski.raspiinfo.Helpers.*
+import com.andrewpetrowski.raspiinfo.Models.PageDatePair
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
+import io.github.angpysha.diploma_bridge.Models.DHT11_Data
+import kotlinx.android.synthetic.main.activity_humidity.*
 import kotlinx.android.synthetic.main.fragment_humidity.*
 import kotlinx.android.synthetic.main.fragment_temperature.*
 import java.text.SimpleDateFormat
 import java.util.*
+import com.andrewpetrowski.raspiinfo.Models.TaskParams
+import kotlin.collections.ArrayList
 
 
 /**
@@ -46,7 +49,13 @@ import java.util.*
  * Use the [HumidityFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HumidityFragment : Fragment() {
+class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
+    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        var calendar = Calendar.getInstance()
+        calendar.set(year, monthOfYear, dayOfMonth)
+
+        activity!!.pager_humidity!!.currentItem = PageDatePair.GetByDate(calendar.time, activity!!.pager_humidity!!.adapter!!.count)
+    }
 
     // TODO: Rename and change types of parameters
     private var mParam1: String? = null
@@ -69,8 +78,21 @@ class HumidityFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val args = arguments
         val date = args!!.getString("DATE").toDate()
-        LoadData().execute(date)
+        val type = args!!.getString("TYPE").toInt()
+        LoadData().execute(TaskParams(date, type))
 
+        swiperefresh_humidity!!.setOnRefreshListener {
+            LoadData().execute(TaskParams(date, type))
+        }
+
+        sel_date_hum_but!!.setOnClickListener {
+            val cal = Calendar.getInstance()
+            cal.time = date
+
+            val dialog = DatePickerDialog.newInstance(this@HumidityFragment, cal)
+
+            dialog.show(activity!!.fragmentManager, "Change humidity")
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -126,19 +148,79 @@ class HumidityFragment : Fragment() {
         fun newInstance(date: Date?): HumidityFragment {
             val fragment = HumidityFragment()
             val args = Bundle()
-            args.putString("DATE",date!!.toFormatedString())
+            args.putString("DATE", date!!.toFormatedString())
+            fragment.arguments = args
+            return fragment
+        }
+
+        fun newInstance(position: Int, type: Int, size: Int): HumidityFragment {
+            val fragment = HumidityFragment()
+            val args = Bundle()
+            val date = PageDatePair.GetDate(position, size, type)
+            args.putString("DATE", date!!.toFormatedString())
+            args.putString("TYPE", type.toString())
             fragment.arguments = args
             return fragment
         }
     }
 
-    inner class LoadData: AsyncTask<Date,Void,List<DHT11_Data>>() {
+    inner class LoadData : AsyncTask<TaskParams, Void, List<DHT11_Data>>() {
         private lateinit var _date: Date
-        override fun doInBackground(vararg params: Date?): List<DHT11_Data> {
+        private var type = 0
+        override fun doInBackground(vararg params: TaskParams?): List<DHT11_Data> {
             val temperatureContorller = AndroidDHTController()
 
-            val date: Date = params[0]!!.zeroTime()
-            var data = temperatureContorller.GetByDate(date).sortedBy { it.created_at }
+            val date: Date = params[0]!!.date!!.zeroTime()
+            var data: List<DHT11_Data> = ArrayList()
+            this.type = params[0]!!.type
+            when (type) {
+                0 -> {
+                    data = temperatureContorller.GetByDate(date).sortedBy { it.created_at }
+                }
+
+                1 -> {
+                    val calendar = Calendar.getInstance()
+                    calendar.time = date.fullTime()
+                    val now = Date()
+                    // calendar.set(Calendar.DAY_OF_MONTH,27)
+//                    val calendar = GregorianCalendar
+//                    if (calendar.firstDayOfWeek == Calendar.MONDAY) {
+//                        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+//                    } else {
+                    calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
+
+//                    }
+                    if (calendar.time > now)
+                        calendar.time = now.fullTime()
+                    data = temperatureContorller.GetByDate(calendar.time, 1)
+                }
+
+                2 -> {
+                    val calendar = Calendar.getInstance()
+                    calendar.time = date.fullTime()
+                    val now = Date()
+
+                    val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+                    calendar.set(Calendar.DAY_OF_MONTH, maxDay)
+                    if (calendar.time > now)
+                        calendar.time = now.fullTime()
+                    data = temperatureContorller.GetByDate(calendar.time, 2)
+
+                }
+                3 -> {
+                    val calendar = Calendar.getInstance()
+                    calendar.time = date.fullTime()
+                    val now = Date()
+
+                    val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_YEAR)
+
+                    calendar.set(Calendar.DAY_OF_YEAR, maxDay)
+                    if (calendar.time > now)
+                        calendar.time = now.fullTime()
+                    data = temperatureContorller.GetByDate(calendar.time, 3)
+                }
+            }
             _date = date
             return data
         }
@@ -147,7 +229,9 @@ class HumidityFragment : Fragment() {
             super.onPostExecute(result)
 
             result!!.let {
-                if (result == null || result.isEmpty()){
+                if (result == null || result.isEmpty()) {
+                    if (temperature_header == null || temperature_graph == null)
+                        return@let
                     val ddf = SimpleDateFormat("MM\\dd\\yyyy")
                     humidity_header!!.text = String.format(resources
                             .getString(R.string.temperature_header), ddf.format(_date))
@@ -155,44 +239,142 @@ class HumidityFragment : Fragment() {
                     return@let
 
                 }
-                var list: MutableList<DataPoint> = ArrayList()
+                when (type) {
+                    0 -> {
+                        var list: MutableList<DataPoint> = ArrayList()
 //                val temp_gragh = view!!.findViewById<GraphView>(R.id.temperature_graph)
 //                var series = LineGraphSeries<DataPoint>()
-                result.mapTo(list) { DataPoint(it.created_at, it.humidity.toDouble()) }
+                        result.mapTo(list) { DataPoint(it.created_at, it.humidity.toDouble()) }
 
-                var aas = list.toTypedArray()
-                var series = LineGraphSeries(aas)
+                        var aas = list.toTypedArray()
+                        var series = LineGraphSeries(aas)
+
+                        if (series == null || humidity_graph == null) {
+                            return@let
+                        }
 //                 temperature_header!!.text = "hey"
 
 //                temperature_graph!!.removeAllSeries()
 //                temperature_graph!!.addSeries(series)
 
 //                temperature_graph!!.viewport.isScalable = true
-                series.isDrawDataPoints = true
-                humidity_graph!!.addSeries(series)
-                humidity_graph!!.viewport.setMinX(aas!!.get(0)!!.x ?: 0.0)
+                        series.isDrawDataPoints = true
+                        humidity_graph!!.addSeries(series)
+                        humidity_graph!!.viewport.setMinX(aas!!.get(0)!!.x ?: 0.0)
 //                if (resources.getInteger(R.integer.num_axis) < list.size - 1)
 //                    temperature_graph!!.viewport.setMaxX(aas.get(resources.getInteger(R.integer.num_axis)).x ?: 1.0)
 //                else
 //                    temperature_graph!!.viewport.setMaxX(aas.get(list.size - 1).x ?: 1.0)
-                humidity_graph!!.viewport.setMinY(aas.minBy { it.y }!!.y - 0.5)
-                humidity_graph!!.viewport.setMaxY(aas.maxBy { it.y }!!.y + 0.5)
-                humidity_graph!!.viewport.isXAxisBoundsManual = true
-                humidity_graph!!.viewport.isYAxisBoundsManual = true
-                //temperature_graph!!.viewport.maxXAxisSize = 1.0
+                        humidity_graph!!.viewport.setMinY(aas.minBy { it.y }!!.y - 0.5)
+                        humidity_graph!!.viewport.setMaxY(aas.maxBy { it.y }!!.y + 0.5)
+                        humidity_graph!!.viewport.isXAxisBoundsManual = true
+                        humidity_graph!!.viewport.isYAxisBoundsManual = true
+                        //temperature_graph!!.viewport.maxXAxisSize = 1.0
 //                temperature_graph!!.gridLabelRenderer.numHorizontalLabels = resources.getInteger(R.integer.num_axis) + 1
 
 //                temperature_graph!!.viewport.isScalable = true
 //                temperature_graph!!.viewport.isScrollable = true
 //
-                val ddf = SimpleDateFormat("MM\\dd\\yyyy")
-                humidity_header!!.text = String.format(resources
-                        .getString(R.string.humidity_header), ddf.format(_date))
-                val sdf = DateAsXAxisLabelFormatter(context, SimpleDateFormat("HH:mm"))
-                humidity_graph!!.gridLabelRenderer.labelFormatter = sdf
+                        val ddf = SimpleDateFormat("MM\\dd\\yyyy")
+                        humidity_header!!.text = String.format(resources
+                                .getString(R.string.humidity_header), ddf.format(_date))
+                        val sdf = DateAsXAxisLabelFormatter(context, SimpleDateFormat("HH:mm"))
+                        humidity_graph!!.gridLabelRenderer.labelFormatter = sdf
 //
 ////                cur_date = result.get(0).created_at.zeroTime()
-                swiperefresh_humidity!!.isRefreshing = false
+                        swiperefresh_humidity!!.isRefreshing = false
+                    }
+
+                    1-> {
+                        var list: MutableList<DataPoint> = ArrayList()
+                        result.mapTo(list) { DataPoint(it.created_at, it.humidity.toDouble()) }
+                        var aas = list.toTypedArray()
+                        aas.sortBy { it.x }
+                        var series = LineGraphSeries(aas)
+                        if (series == null || humidity_graph == null || series.isEmpty) {
+                            return@let
+                        }
+                        series.isDrawDataPoints = true
+                        humidity_graph!!.removeAllSeries()
+//                        temperature_graph!!.gridLabelRenderer.numHorizontalLabels = 5
+//                        temperature_graph!!.gridLabelRenderer.horizontalAxisTitle = "Days of week"
+
+                        humidity_graph!!.addSeries(series)
+                        humidity_graph!!.viewport.setMinX(aas!!.get(0).x)
+//                        temperature_graph!!.viewport.setMaxX(aas.maxBy {it.x}!!.x?:0.0)
+                        //                       temperature_graph!!.viewport.setMinX(list!!.first()!!.x)
+//                        temperature_graph!!.viewport.setMaxX(list.last().x)
+                        //                       temperature_graph!!.viewport.setMinY(10.0)
+                        //                       temperature_graph!!.viewport.setMaxY(30.0)
+                        humidity_graph!!.viewport.isXAxisBoundsManual = true
+                        //                       temperature_graph!!.viewport.isYAxisBoundsManual = true
+                        //                       temperature_graph!!.gridLabelRenderer.numHorizontalLabels = 3
+                        val labelDateFormat = DateAsXAxisLabelFormatter(context, SimpleDateFormat("dd\\MM"))
+                        humidity_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
+                        val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
+                        humidity_header!!.text = String.format(resources.getString(R.string.humidity_header), header_str)
+                    }
+
+                    2 -> {
+                        var list: MutableList<DataPoint> = ArrayList()
+                        result.mapTo(list) { DataPoint(it.created_at, it.humidity.toDouble()) }
+                        var aas = list.toTypedArray()
+                        aas.sortBy { it.x }
+                        var series = LineGraphSeries(aas)
+                        if (series == null || humidity_graph == null || series.isEmpty) {
+                            return@let
+                        }
+                        series.isDrawDataPoints = true
+                        humidity_graph!!.removeAllSeries()
+//                        temperature_graph!!.gridLabelRenderer.numHorizontalLabels = 5
+//                        temperature_graph!!.gridLabelRenderer.horizontalAxisTitle = "Days of week"
+
+                        humidity_graph!!.addSeries(series)
+                        humidity_graph!!.viewport.setMinX(aas!!.get(0).x)
+//                        temperature_graph!!.viewport.setMaxX(aas.maxBy {it.x}!!.x?:0.0)
+                        //                       temperature_graph!!.viewport.setMinX(list!!.first()!!.x)
+//                        temperature_graph!!.viewport.setMaxX(list.last().x)
+                        //                       temperature_graph!!.viewport.setMinY(10.0)
+                        //                       temperature_graph!!.viewport.setMaxY(30.0)
+                        humidity_graph!!.viewport.isXAxisBoundsManual = true
+                        //                       temperature_graph!!.viewport.isYAxisBoundsManual = true
+                        //                       temperature_graph!!.gridLabelRenderer.numHorizontalLabels = 3
+                        val labelDateFormat = DateAsXAxisLabelFormatter(context, SimpleDateFormat("dd\\MM"))
+                        humidity_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
+                        val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
+                        humidity_header!!.text = String.format(resources.getString(R.string.humidity_header), header_str)
+                    }
+
+                    3 -> {
+                        var list: MutableList<DataPoint> = ArrayList()
+                        result.mapTo(list) { DataPoint(it.created_at, it.humidity.toDouble()) }
+                        var aas = list.toTypedArray()
+                        aas.sortBy { it.x }
+                        var series = LineGraphSeries(aas)
+                        if (series == null || humidity_graph == null || series.isEmpty) {
+                            return@let
+                        }
+                        series.isDrawDataPoints = true
+                        humidity_graph!!.removeAllSeries()
+//                        temperature_graph!!.gridLabelRenderer.numHorizontalLabels = 5
+//                        temperature_graph!!.gridLabelRenderer.horizontalAxisTitle = "Days of week"
+
+                        humidity_graph!!.addSeries(series)
+                        humidity_graph!!.viewport.setMinX(aas!!.get(0).x)
+//                        temperature_graph!!.viewport.setMaxX(aas.maxBy {it.x}!!.x?:0.0)
+                        //                       temperature_graph!!.viewport.setMinX(list!!.first()!!.x)
+//                        temperature_graph!!.viewport.setMaxX(list.last().x)
+                        //                       temperature_graph!!.viewport.setMinY(10.0)
+                        //                       temperature_graph!!.viewport.setMaxY(30.0)
+                        humidity_graph!!.viewport.isXAxisBoundsManual = true
+                        //                       temperature_graph!!.viewport.isYAxisBoundsManual = true
+                        //                       temperature_graph!!.gridLabelRenderer.numHorizontalLabels = 3
+                        val labelDateFormat = DateAsXAxisLabelFormatter(context, SimpleDateFormat("MMM"))
+                        humidity_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
+                        val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
+                        humidity_header!!.text = String.format(resources.getString(R.string.humidity_header), header_str)
+                    }
+                }
             }
         }
     }
