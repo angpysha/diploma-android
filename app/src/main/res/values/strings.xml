@@ -41,4 +41,6 @@
     <string name="drawer_pressure">Pressure</string>
     <string name="pressure_title">Pressures graph</string>
     <string name="pressure_header">Pressure graph at \n %s</string>
+    <string name="progress_title">Please, wait</string>
+    <string name="progress_content">Data is loading</string>
 </resources>
