@@ -307,7 +307,7 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 //                            swiperefresh_temperature!!.isRefreshing = false
                             return@let
                         }
-                        series.isDrawDataPoints = -true
+                        series.isDrawDataPoints = true
                         temperature_graph!!.addSeries(series)
                         temperature_graph!!.viewport.setMinX(aas!!.get(0)!!.x ?: 0.0)
                         if (resources.getInteger(R.integer.num_axis) < list.size - 1)
