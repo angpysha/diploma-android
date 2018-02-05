@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -41,7 +42,24 @@ import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import io.github.angpysha.diploma_bridge.Decorators.DateEx
 import com.andrewpetrowski.raspiinfo.Helpers.Additionals
 
-class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener {
+class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DatePickerDialog.OnDateSetListener
+        , AdapterView.OnItemSelectedListener,ViewPager.OnPageChangeListener {
+    override fun onPageScrollStateChanged(state: Int) {
+
+    }
+
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+    }
+
+    override fun onPageSelected(position: Int) {
+        progress = MaterialDialog.Builder(this)
+                .title(resources.getString(R.string.progress_title))
+                .content(resources.getString(R.string.progress_content))
+                .progress(true,0)
+                .show()
+    }
+
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -174,6 +192,8 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
         spinner_temperaure!!.adapter = spinner_adapter
         spinner_temperaure!!.onItemSelectedListener = this
         // spinner_temperaure
+
+        pager_temperature!!.addOnPageChangeListener(this)
     }
 
     fun setChart() {

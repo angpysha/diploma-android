@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -38,7 +39,24 @@ import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import kotlinx.android.synthetic.main.activity_humidity.*
 import kotlinx.android.synthetic.main.activity_temperature.*
 
-class Humidity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class Humidity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
+ViewPager.OnPageChangeListener{
+    override fun onPageScrollStateChanged(state: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onPageSelected(position: Int) {
+        progress = MaterialDialog.Builder(this)
+                .title(resources.getString(R.string.progress_title))
+                .content(resources.getString(R.string.progress_content))
+                .progress(true,0)
+                .show()
+    }
+
     lateinit var progress: MaterialDialog
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -168,6 +186,8 @@ class Humidity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         spinner_humidity!!.adapter = spinner_adapter
         spinner_humidity!!.onItemSelectedListener = this
+
+        pager_humidity!!.addOnPageChangeListener(this)
     }
 
     inner class LoadSize(context: Context) : AsyncTask<Int, Void, Int>() {
