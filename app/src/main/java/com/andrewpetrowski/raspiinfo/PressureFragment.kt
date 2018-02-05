@@ -399,8 +399,8 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     }
                 }
             }
-            swiperefresh_pressure!!.isRefreshing = false
-            (activity as Pressure).progress.hide()
+//            swiperefresh_pressure!!.isRefreshing = false
+//            (activity as Pressure).progress.hide()
         }
 
     }

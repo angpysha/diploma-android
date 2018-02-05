@@ -50,11 +50,11 @@ ViewPager.OnPageChangeListener{
     }
 
     override fun onPageSelected(position: Int) {
-        progress = MaterialDialog.Builder(this)
-                .title(resources.getString(R.string.progress_title))
-                .content(resources.getString(R.string.progress_content))
-                .progress(true,0)
-                .show()
+//        progress = MaterialDialog.Builder(this)
+//                .title(resources.getString(R.string.progress_title))
+//                .content(resources.getString(R.string.progress_content))
+//                .progress(true,0)
+//                .show()
     }
 
     lateinit var progress: MaterialDialog

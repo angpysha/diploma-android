@@ -439,6 +439,8 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
 
             }
+            if (activity != null)
+                (activity as TemperatureActivity).progress.hide()
 
         }
     }
