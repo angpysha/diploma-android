@@ -31,6 +31,7 @@ import co.zsmb.materialdrawerkt.builders.DrawerBuilderKt
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
+import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidBMPController
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
 import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
@@ -58,6 +59,11 @@ import io.github.angpysha.diploma_bridge.Models.DHT11_Data
 class Main : AppCompatActivity() {
 
     private lateinit var result: Drawer
+    private var dhtLoaded = false
+    private var dhtmaxminLoaded = false
+    private var bmploaded = false
+
+    private lateinit var progress: MaterialDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         LayoutInflaterCompat.setFactory2(layoutInflater, IconicsLayoutInflater2(delegate))
         super.onCreate(savedInstanceState)
@@ -132,6 +138,12 @@ class Main : AppCompatActivity() {
 
 //        LoadMaxMin().execute()
         LoadPressure().execute()
+
+        progress = MaterialDialog.Builder(this)
+                .title(resources.getString(R.string.progress_title))
+                .content(resources.getString(R.string.progress_content))
+                .progress(true,0)
+                .show()
         
     }
 
@@ -183,6 +195,8 @@ class Main : AppCompatActivity() {
                 val df = SimpleDateFormat("MM/dd/yyyy HH:mm")
                 dateText.text = String.format(resources.getString(R.string.last_date), df.format(result.created_at))
                 swiperefresh.isRefreshing = false
+
+                dhtLoaded = true
             }
         }
     }
@@ -211,6 +225,8 @@ class Main : AppCompatActivity() {
 
                 maxHumidity!!.text = String.format(resources.getString(R.string.maximum_humidity),maxH)
                 minHumidity!!.text = String.format(resources.getString(R.string.minimum_humidity),minH)
+
+                dhtmaxminLoaded = true
             }
         }
     }
@@ -227,6 +243,13 @@ class Main : AppCompatActivity() {
             lastPressure!!.text = String.format(resources.getString(R.string.pressure),result!!.pressure/1000f)
             minPressure!!.text = String.format(resources.getString(R.string.min_pressure),result.minPressure/1000f)
             maxPressure!!.text = String.format(resources.getString(R.string.max_pressure),result.minPressure/1000f)
+
+            bmploaded = true
+
+            if (bmploaded && dhtLoaded) {
+//                progress_main!!.visibility = View.GONE
+                progress.hide()
+            }
         }
     }
 }

@@ -230,12 +230,17 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
             result!!.let {
                 if (result == null || result.isEmpty()) {
-                    if (temperature_header == null || temperature_graph == null)
+                    if (temperature_header == null || temperature_graph == null) {
+//                        swiperefresh_humidity!!.isRefreshing = false
+//                        (activity as Humidity).progress.hide()
                         return@let
+                    }
                     val ddf = SimpleDateFormat("MM\\dd\\yyyy")
                     humidity_header!!.text = String.format(resources
                             .getString(R.string.temperature_header), ddf.format(_date))
                     humidity_graph!!.title = "There is not data for this day"
+                    (activity as Humidity).progress.hide()
+                    swiperefresh_humidity!!.isRefreshing = false
                     return@let
 
                 }
@@ -250,6 +255,8 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         var series = LineGraphSeries(aas)
 
                         if (series == null || humidity_graph == null) {
+//                            swiperefresh_humidity!!.isRefreshing = false
+//                            (activity as Humidity).progress.hide()
                             return@let
                         }
 //                 temperature_header!!.text = "hey"
@@ -280,7 +287,7 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                                 .getString(R.string.humidity_header), ddf.format(_date))
                         val sdf = DateAsXAxisLabelFormatter(context, SimpleDateFormat("HH:mm"))
                         humidity_graph!!.gridLabelRenderer.labelFormatter = sdf
-//
+                        (activity as Humidity).progress.hide()
 ////                cur_date = result.get(0).created_at.zeroTime()
                         swiperefresh_humidity!!.isRefreshing = false
                     }
@@ -292,6 +299,8 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || humidity_graph == null || series.isEmpty) {
+//                            swiperefresh_humidity!!.isRefreshing = false
+//                            (activity as Humidity).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -313,6 +322,8 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         humidity_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
                         val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
                         humidity_header!!.text = String.format(resources.getString(R.string.humidity_header), header_str)
+                        (activity as Humidity).progress.hide()
+                        swiperefresh_humidity!!.isRefreshing = false
                     }
 
                     2 -> {
@@ -322,6 +333,8 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || humidity_graph == null || series.isEmpty) {
+//                            swiperefresh_humidity!!.isRefreshing = false
+//                            (activity as Humidity).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -343,6 +356,8 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         humidity_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
                         val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
                         humidity_header!!.text = String.format(resources.getString(R.string.humidity_header), header_str)
+                        (activity as Humidity).progress.hide()
+                        swiperefresh_humidity!!.isRefreshing = false
                     }
 
                     3 -> {
@@ -352,6 +367,8 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || humidity_graph == null || series.isEmpty) {
+//                            swiperefresh_humidity!!.isRefreshing = false
+//                            (activity as Humidity).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -373,6 +390,8 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         humidity_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
                         val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
                         humidity_header!!.text = String.format(resources.getString(R.string.humidity_header), header_str)
+                        (activity as Humidity).progress.hide()
+                        swiperefresh_humidity!!.isRefreshing = false
                     }
                 }
             }

@@ -232,12 +232,18 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
             result!!.let {
                 if (result.isEmpty()) {
-                    if (pressure_header == null || pressure_graph == null)
+                    if (pressure_header == null || pressure_graph == null){
+//                        swiperefresh_pressure!!.isRefreshing = false
+//                        (activity as Pressure).progress.hide()
                         return@let
+                    }
+
                     val ddf = SimpleDateFormat("MM\\dd\\yyyy")
                     pressure_header!!.text = String.format(resources
                             .getString(R.string.humidity_header), ddf.format(_date))
                     pressure_graph!!.title = "There is not data for this day"
+                    swiperefresh_pressure!!.isRefreshing = false
+                    (activity as Pressure).progress.hide()
                     return@let
                 }
 
@@ -252,6 +258,8 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         var series = LineGraphSeries(aas)
 
                         if (series == null || pressure_graph == null) {
+//                            swiperefresh_pressure!!.isRefreshing = false
+//                            (activity as Pressure).progress.hide()
                             return@let
                         }
 //                 temperature_header!!.text = "hey"
@@ -282,9 +290,8 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                                 .getString(R.string.humidity_header), ddf.format(_date))
                         val sdf = DateAsXAxisLabelFormatter(context, SimpleDateFormat("HH:mm"))
                         pressure_graph!!.gridLabelRenderer.labelFormatter = sdf
-//
-////                cur_date = result.get(0).created_at.zeroTime()
                         swiperefresh_pressure!!.isRefreshing = false
+                        (activity as Pressure).progress.hide()
                     }
 
                     1 -> {
@@ -294,6 +301,8 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || pressure_graph == null || series.isEmpty) {
+//                            swiperefresh_pressure!!.isRefreshing = false
+//                            (activity as Pressure).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -316,7 +325,7 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
                         pressure_header!!.text = String.format(resources.getString(R.string.pressure_header), header_str)
                         swiperefresh_pressure!!.isRefreshing = false
-
+                        (activity as Pressure).progress.hide()
                     }
 
                     2 -> {
@@ -326,6 +335,8 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || pressure_graph == null || series.isEmpty) {
+//                            swiperefresh_pressure!!.isRefreshing = false
+//                            (activity as Pressure).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -348,6 +359,7 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
                         pressure_header!!.text = String.format(resources.getString(R.string.pressure_header), header_str)
                         swiperefresh_pressure!!.isRefreshing = false
+                        (activity as Pressure).progress.hide()
 
                     }
 
@@ -358,6 +370,8 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || pressure_graph == null || series.isEmpty) {
+//                            swiperefresh_pressure!!.isRefreshing = false
+//                            (activity as Pressure).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -381,9 +395,12 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         pressure_header!!.text = String.format(resources.getString(R.string.pressure_header), header_str)
 
                         swiperefresh_pressure!!.isRefreshing = false
+                        (activity as Pressure).progress.hide()
                     }
                 }
             }
+            swiperefresh_pressure!!.isRefreshing = false
+            (activity as Pressure).progress.hide()
         }
 
     }

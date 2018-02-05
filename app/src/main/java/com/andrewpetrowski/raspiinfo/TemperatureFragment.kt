@@ -28,6 +28,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
 import com.andrewpetrowski.raspiinfo.Helpers.toDate
 import com.andrewpetrowski.raspiinfo.Helpers.toFormatedString
@@ -50,7 +51,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.andrewpetrowski.raspiinfo.Helpers.fullTime
 import com.andrewpetrowski.raspiinfo.Helpers.Additionals
-
+import com.andrewpetrowski.raspiinfo.TemperatureActivity
 
 /**
  * A simple [Fragment] subclass.
@@ -62,11 +63,13 @@ import com.andrewpetrowski.raspiinfo.Helpers.Additionals
  */
 class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
+
     override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
         var calendar = Calendar.getInstance()
         calendar.set(year, monthOfYear, dayOfMonth)
 //        pager_temperature!!.currentItem = PageDatePair.GetByDate(calendar.time)
         activity!!.pager_temperature!!.currentItem = PageDatePair.GetByDate(calendar.time, activity!!.pager_temperature!!.adapter!!.count)
+
         //LoadData().execute(calendar.time)
     }
 
@@ -102,6 +105,7 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         val args = arguments
         val date = args!!.getString("DATE").toDate()
         val type = args!!.getString("TYPE").toInt()
+
 
         LoadData().execute(TaskParams(date, type))
 
@@ -204,9 +208,11 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
     }
 
-    inner class LoadData : AsyncTask<TaskParams, Void, List<DHT11_Data>>() {
+    inner class LoadData() : AsyncTask<TaskParams, Void, List<DHT11_Data>>() {
         private lateinit var _date: Date
         private var type = 0
+
+
         override fun doInBackground(vararg params: TaskParams?): List<DHT11_Data> {
             val temperatureContorller = AndroidDHTController()
 
@@ -271,12 +277,20 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             result!!.let {
 
                 if (result == null || result.isEmpty()) {
-                    if (temperature_header == null || temperature_graph == null)
+                    if (temperature_header == null || temperature_graph == null) {
+//                        if (activity != null) {
+//                            (activity as TemperatureActivity).progress.hide()
+//                            swiperefresh_temperature!!.isRefreshing = false
+//                        }
                         return@let
+
+                    }
                     val ddf = SimpleDateFormat("MM\\dd\\yyyy")
                     temperature_header!!.text = String.format(resources
                             .getString(R.string.temperature_header), ddf.format(_date ?: Date()))
                     temperature_graph!!.title = "There is not data for this day"
+                    (activity as TemperatureActivity).progress.hide()
+                    swiperefresh_temperature!!.isRefreshing = false
                     return@let
 
                 }
@@ -289,9 +303,11 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         var aas = list.toTypedArray()
                         var series = LineGraphSeries(aas)
                         if (series == null || temperature_graph == null) {
+//                            (activity as TemperatureActivity).progress.hide()
+//                            swiperefresh_temperature!!.isRefreshing = false
                             return@let
                         }
-                        series.isDrawDataPoints = true
+                        series.isDrawDataPoints = -true
                         temperature_graph!!.addSeries(series)
                         temperature_graph!!.viewport.setMinX(aas!!.get(0)!!.x ?: 0.0)
                         if (resources.getInteger(R.integer.num_axis) < list.size - 1)
@@ -311,6 +327,7 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                                 .getString(R.string.temperature_header), ddf.format(_date))
                         val sdf = DateAsXAxisLabelFormatter(context, SimpleDateFormat("HH:mm"))
                         temperature_graph!!.gridLabelRenderer.labelFormatter = sdf
+                        (activity as TemperatureActivity).progress.hide()
                         swiperefresh_temperature!!.isRefreshing = false
                     }
 
@@ -321,6 +338,8 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || temperature_graph == null || series.isEmpty) {
+//                            swiperefresh_temperature!!.isRefreshing = false
+//                            (activity as TemperatureActivity).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -342,6 +361,9 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         temperature_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
                         val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
                         temperature_header!!.text = String.format(resources.getString(R.string.temperature_header), header_str)
+                        (activity as TemperatureActivity).progress.hide()
+                        swiperefresh_temperature!!.isRefreshing = false
+
                     }
 
                     2 -> {
@@ -351,6 +373,8 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || temperature_graph == null || series.isEmpty) {
+//                            swiperefresh_temperature!!.isRefreshing = false
+//                            (activity as TemperatureActivity).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -372,6 +396,8 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         temperature_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
                         val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
                         temperature_header!!.text = String.format(resources.getString(R.string.temperature_header), header_str)
+                        (activity as TemperatureActivity).progress.hide()
+                        swiperefresh_temperature!!.isRefreshing = false
                     }
 
                     3 -> {
@@ -381,6 +407,8 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || temperature_graph == null || series.isEmpty) {
+//                            swiperefresh_temperature!!.isRefreshing = false
+//                            (activity as TemperatureActivity).progress.hide()
                             return@let
                         }
                         series.isDrawDataPoints = true
@@ -402,7 +430,11 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         temperature_graph!!.gridLabelRenderer.labelFormatter = labelDateFormat
                         val header_str = Additionals.DateRange(result!!.last().created_at, result!!.first().created_at)
                         temperature_header!!.text = String.format(resources.getString(R.string.temperature_header), header_str)
+                        (activity as TemperatureActivity).progress.hide()
+                        swiperefresh_temperature!!.isRefreshing = false
                     }
+
+
                 }
 
 

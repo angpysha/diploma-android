@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
+import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Adapters.HumidityFragmentAdapter
 import com.andrewpetrowski.raspiinfo.Adapters.TemperatureFragmentAdapter
 import com.andrewpetrowski.raspiinfo.Helpers.Additionals
@@ -38,11 +39,17 @@ import kotlinx.android.synthetic.main.activity_humidity.*
 import kotlinx.android.synthetic.main.activity_temperature.*
 
 class Humidity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+    lateinit var progress: MaterialDialog
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        progress = MaterialDialog.Builder(this)
+                .title(resources.getString(R.string.progress_title))
+                .content(resources.getString(R.string.progress_content))
+                .progress(true,0)
+                .show()
         when (position) {
             0 -> {
                 val _size = LoadSize(this).execute(0).get()

@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
+import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Adapters.TemperatureFragmentAdapter
 import com.andrewpetrowski.raspiinfo.Models.FragmentAdapterParams
 import com.github.pwittchen.swipe.library.rx2.Swipe
@@ -47,7 +48,11 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         Log.d("Selected", position.toString())
-
+        progress = MaterialDialog.Builder(this)
+                .title(resources.getString(R.string.progress_title))
+                .content(resources.getString(R.string.progress_content))
+                .progress(true,0)
+                .show()
         when (position) {
             0 -> {
                 val _size = LoadSize(this).execute(0).get()
@@ -88,7 +93,7 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
 
         // LoadAsync().execute(calendar.time.zeroTime())
     }
-
+    lateinit var progress: MaterialDialog
     private lateinit var result: Drawer
     private lateinit var cur_date: Date
     private var x1 = 0f
