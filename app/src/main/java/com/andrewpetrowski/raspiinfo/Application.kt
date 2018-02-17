@@ -19,6 +19,8 @@ package com.andrewpetrowski.raspiinfo
 import android.content.Context
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
+import io.socket.client.IO
+import io.socket.client.Socket
 import net.danlew.android.joda.JodaTimeAndroid
 
 /**
@@ -26,13 +28,21 @@ import net.danlew.android.joda.JodaTimeAndroid
  */
 
 class Application : MultiDexApplication() {
+    private lateinit var socket : Socket
+
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
         MultiDex.install(this)
+
     }
 
     override fun onCreate() {
         super.onCreate()
         JodaTimeAndroid.init(this)
+        socket = IO.socket("https://raspi-info-bot.herokuapp.com/").connect()
+    }
+
+    fun getSocket() : Socket {
+        return this.socket
     }
 }
