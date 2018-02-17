@@ -85,4 +85,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'net.danlew:android.joda:2.9.9.1'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+    implementation ('io.socket:socket.io-client:1.0.0') {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    }
+
 }
