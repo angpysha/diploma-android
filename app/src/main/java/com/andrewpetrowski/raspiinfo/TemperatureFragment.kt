@@ -311,18 +311,18 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         series.isDrawDataPoints = true
                         temperature_graph!!.addSeries(series)
                         temperature_graph!!.viewport.setMinX(aas!!.get(0)!!.x ?: 0.0)
-                        if (resources.getInteger(R.integer.num_axis) < list.size - 1)
-                            temperature_graph!!.viewport.setMaxX(aas.get(resources.getInteger(R.integer.num_axis)).x
-                                    ?: 1.0)
-                        else
-                            temperature_graph!!.viewport.setMaxX(aas.get(list.size - 1).x ?: 1.0)
+//                        if (resources.getInteger(R.integer.num_axis) < list.size - 1)
+//                            temperature_graph!!.viewport.setMaxX(aas.get(resources.getInteger(R.integer.num_axis)).x
+//                                    ?: 1.0)
+//                        else
+//                            temperature_graph!!.viewport.setMaxX(aas.get(list.size - 1).x ?: 1.0)
                         temperature_graph!!.viewport.setMinY(aas.minBy { it.y }!!.y - 0.5)
                         temperature_graph!!.viewport.setMaxY(aas.maxBy { it.y }!!.y + 0.5)
                         temperature_graph!!.viewport.isXAxisBoundsManual = true
                         temperature_graph!!.viewport.isYAxisBoundsManual = true
                         temperature_graph!!.gridLabelRenderer.numHorizontalLabels = resources.getInteger(R.integer.num_axis) + 1
-                        temperature_graph!!.viewport.isScalable = true
-                        temperature_graph!!.viewport.isScrollable = true
+//                        temperature_graph!!.viewport.isScalable = true
+//                        temperature_graph!!.viewport.isScrollable = true
                         val ddf = SimpleDateFormat("MM\\dd\\yyyy")
                         temperature_header!!.text = String.format(resources
                                 .getString(R.string.temperature_header), ddf.format(_date))
