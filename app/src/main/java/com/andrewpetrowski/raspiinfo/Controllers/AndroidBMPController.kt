@@ -79,9 +79,9 @@ class AndroidBMPController {
         return rest
     }
 
-    fun GetMaxMinLast(date: Date): PressureDataClass {
+    fun GetMaxMinLast(date: Date): PressureDataClass? {
         var data = GetByDate(date)
-      //  data?.let {
+        data?.let {
             val min = data!!.minBy { it.pressure }!!.pressure
 
             val max = data.maxBy { it.pressure }!!.pressure
@@ -89,7 +89,7 @@ class AndroidBMPController {
             val now = data.sortedBy { it.created_at }.last().pressure
 
             return PressureDataClass(now, max, min)
-      //  }
-        //return PressureDataClass(0f, 0f, 0f)
+        }
+        return PressureDataClass(0f, 0f, 0f)
     }
 }

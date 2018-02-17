@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.provider.SyncStateContract
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -208,21 +209,21 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
     }
 
-    inner class LoadData() : AsyncTask<TaskParams, Void, List<DHT11_Data>>() {
+    inner class LoadData() : AsyncTask<TaskParams, Void, List<DHT11_Data>?>() {
         private lateinit var _date: Date
         private var type = 0
 
 
-        override fun doInBackground(vararg params: TaskParams?): List<DHT11_Data> {
+        override fun doInBackground(vararg params: TaskParams?): List<DHT11_Data>? {
             val temperatureContorller = AndroidDHTController()
 
             val date: Date = params[0]!!.date!!.zeroTime()
             val type = params[0]!!.type
             this.type = type
-            var data: List<DHT11_Data> = ArrayList()
+            var data: List<DHT11_Data>? = ArrayList()
             when (type) {
                 0 -> {
-                    data = temperatureContorller.GetByDate(date).sortedBy { it.created_at }
+                    data = temperatureContorller.GetByDate(date)?.sortedBy { it.created_at }
                 }
                 1 -> {
                     val calendar = Calendar.getInstance()
@@ -273,8 +274,8 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
 
         override fun onPostExecute(result: List<DHT11_Data>?) {
-            super.onPostExecute(result)
-            result!!.let {
+           super.onPostExecute(result)
+            (if (result != null) result else Log.d("Error", "Null")).let {
 
                 if (result == null || result.isEmpty()) {
                     if (temperature_header == null || temperature_graph == null) {
@@ -299,7 +300,7 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 when (type) {
                     0 -> {
                         var list: MutableList<DataPoint> = ArrayList()
-                        result.mapTo(list) { DataPoint(it.created_at, it.temperature.toDouble()) }
+                        result!!.mapTo(list) { DataPoint(it.created_at, it.temperature.toDouble()) }
                         var aas = list.toTypedArray()
                         var series = LineGraphSeries(aas)
                         if (series == null || temperature_graph == null) {
@@ -333,7 +334,7 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
                     1 -> {
                         var list: MutableList<DataPoint> = ArrayList()
-                        result.mapTo(list) { DataPoint(it.created_at, it.temperature.toDouble()) }
+                        result!!.mapTo(list) { DataPoint(it.created_at, it.temperature.toDouble()) }
                         var aas = list.toTypedArray()
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
@@ -368,7 +369,7 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
                     2 -> {
                         var list: MutableList<DataPoint> = ArrayList()
-                        result.mapTo(list) { DataPoint(it.created_at, it.temperature.toDouble()) }
+                        result!!.mapTo(list) { DataPoint(it.created_at, it.temperature.toDouble()) }
                         var aas = list.toTypedArray()
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
@@ -402,7 +403,7 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
                     3 -> {
                         var list: MutableList<DataPoint> = ArrayList()
-                        result.mapTo(list) { DataPoint(it.created_at, it.temperature.toDouble()) }
+                        result!!.mapTo(list) { DataPoint(it.created_at, it.temperature.toDouble()) }
                         var aas = list.toTypedArray()
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)

@@ -75,32 +75,32 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
             0 -> {
                 val _size = LoadSize(this).execute(0).get()
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
-                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size)
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size?:1)
 
                 pager_temperature!!.adapter = adapter
-                pager_temperature!!.currentItem = _size - 1
+                pager_temperature!!.currentItem = _size?:1 - 1
             }
             1 -> {
                 val _size = LoadSize(this).execute(1).get()
-                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size, 1)
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size?:1, 1)
 
                 pager_temperature!!.adapter = adapter
-                pager_temperature!!.currentItem = _size - 1
+                pager_temperature!!.currentItem = _size?:1 - 1
 
             }
             2 -> {
                 val _size = LoadSize(this).execute(2).get()
-                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size, 2)
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size?:1, 2)
 
                 pager_temperature!!.adapter = adapter
-                pager_temperature!!.currentItem = _size - 1
+                pager_temperature!!.currentItem = _size?:1 - 1
 
             }
             3 -> {
                 val _size = LoadSize(this).execute(3).get()
-                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size, 3)
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size?:1, 3)
                 pager_temperature!!.adapter = adapter
-                pager_temperature!!.currentItem = _size - 1
+                pager_temperature!!.currentItem = _size?: - 1
             }
         }
     }
@@ -208,8 +208,8 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
             this.context = context
         }
 
-        override fun doInBackground(vararg params: Int?): Int {
-            var size = 0
+        override fun doInBackground(vararg params: Int?): Int? {
+            var size:Int? = 0
             when (params[0]) {
                 0 -> {
                     val dht = DhtController()

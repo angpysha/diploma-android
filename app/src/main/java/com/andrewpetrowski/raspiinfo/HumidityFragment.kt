@@ -164,18 +164,18 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
     }
 
-    inner class LoadData : AsyncTask<TaskParams, Void, List<DHT11_Data>>() {
+    inner class LoadData : AsyncTask<TaskParams, Void, List<DHT11_Data>?>() {
         private lateinit var _date: Date
         private var type = 0
-        override fun doInBackground(vararg params: TaskParams?): List<DHT11_Data> {
+        override fun doInBackground(vararg params: TaskParams?): List<DHT11_Data>? {
             val temperatureContorller = AndroidDHTController()
 
             val date: Date = params[0]!!.date!!.zeroTime()
-            var data: List<DHT11_Data> = ArrayList()
+            var data: List<DHT11_Data>? = ArrayList()
             this.type = params[0]!!.type
             when (type) {
                 0 -> {
-                    data = temperatureContorller.GetByDate(date).sortedBy { it.created_at }
+                    data = temperatureContorller.GetByDate(date)
                 }
 
                 1 -> {
@@ -227,13 +227,11 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
         override fun onPostExecute(result: List<DHT11_Data>?) {
             super.onPostExecute(result)
-
-            result!!.let {
                 if (result == null || result.isEmpty()) {
                     if (temperature_header == null || temperature_graph == null) {
 //                        swiperefresh_humidity!!.isRefreshing = false
 //                        (activity as Humidity).progress.hide()
-                        return@let
+                        return
                     }
                     val ddf = SimpleDateFormat("MM\\dd\\yyyy")
                     humidity_header!!.text = String.format(resources
@@ -241,7 +239,7 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     humidity_graph!!.title = "There is not data for this day"
                     (activity as Humidity).progress.hide()
                     swiperefresh_humidity!!.isRefreshing = false
-                    return@let
+                    return
 
                 }
                 when (type) {
@@ -252,12 +250,13 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         result.mapTo(list) { DataPoint(it.created_at, it.humidity.toDouble()) }
 
                         var aas = list.toTypedArray()
+                        aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
 
                         if (series == null || humidity_graph == null) {
 //                            swiperefresh_humidity!!.isRefreshing = false
 //                            (activity as Humidity).progress.hide()
-                            return@let
+                            return
                         }
 //                 temperature_header!!.text = "hey"
 
@@ -301,7 +300,7 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         if (series == null || humidity_graph == null || series.isEmpty) {
 //                            swiperefresh_humidity!!.isRefreshing = false
 //                            (activity as Humidity).progress.hide()
-                            return@let
+                            return
                         }
                         series.isDrawDataPoints = true
                         humidity_graph!!.removeAllSeries()
@@ -335,7 +334,7 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         if (series == null || humidity_graph == null || series.isEmpty) {
 //                            swiperefresh_humidity!!.isRefreshing = false
 //                            (activity as Humidity).progress.hide()
-                            return@let
+                            return
                         }
                         series.isDrawDataPoints = true
                         humidity_graph!!.removeAllSeries()
@@ -369,7 +368,7 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         if (series == null || humidity_graph == null || series.isEmpty) {
 //                            swiperefresh_humidity!!.isRefreshing = false
 //                            (activity as Humidity).progress.hide()
-                            return@let
+                            return
                         }
                         series.isDrawDataPoints = true
                         humidity_graph!!.removeAllSeries()
@@ -394,7 +393,6 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         swiperefresh_humidity!!.isRefreshing = false
                     }
                 }
-            }
         }
     }
 }// Required empty public constructor

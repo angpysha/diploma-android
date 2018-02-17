@@ -69,6 +69,15 @@ class Main : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        try {
+            progress = MaterialDialog.Builder(parent)
+                    .title(resources.getString(R.string.progress_title))
+                    .content(resources.getString(R.string.progress_content))
+                    .progress(true,0)
+                    .show()
+        } catch (ex:Exception) {
+
+        }
         LoadAsync().execute()
 
         swiperefresh?.setOnRefreshListener {
@@ -139,11 +148,7 @@ class Main : AppCompatActivity() {
 //        LoadMaxMin().execute()
         LoadPressure().execute()
 
-        progress = MaterialDialog.Builder(this)
-                .title(resources.getString(R.string.progress_title))
-                .content(resources.getString(R.string.progress_content))
-                .progress(true,0)
-                .show()
+
         
     }
 
@@ -166,6 +171,7 @@ class Main : AppCompatActivity() {
     inner class LoadAsync : AsyncTask<Void, Void, DHT11_Data>() {
         override fun onPreExecute() {
             super.onPreExecute()
+
         }
 
         override fun doInBackground(vararg p0: Void?): DHT11_Data {
@@ -201,8 +207,8 @@ class Main : AppCompatActivity() {
         }
     }
 
-    inner class LoadMaxMin : AsyncTask<Void,Void,AndroidDHTController.MaxMin>() {
-        override fun doInBackground(vararg params: Void): AndroidDHTController.MaxMin {
+    inner class LoadMaxMin : AsyncTask<Void,Void,AndroidDHTController.MaxMin?>() {
+        override fun doInBackground(vararg params: Void): AndroidDHTController.MaxMin? {
             val controller = AndroidDHTController()
 
             var data = controller.GetMaxMin(Date().zeroTime())
@@ -231,8 +237,8 @@ class Main : AppCompatActivity() {
         }
     }
 
-    inner class LoadPressure: AsyncTask<Void,Void,PressureDataClass>() {
-        override fun doInBackground(vararg params: Void?): PressureDataClass {
+    inner class LoadPressure: AsyncTask<Void,Void,PressureDataClass?>() {
+        override fun doInBackground(vararg params: Void?): PressureDataClass? {
             val controller = AndroidBMPController()
 
             return controller.GetMaxMinLast(Date().zeroTime())
@@ -240,16 +246,22 @@ class Main : AppCompatActivity() {
 
         override fun onPostExecute(result: PressureDataClass?) {
             super.onPostExecute(result)
-            lastPressure!!.text = String.format(resources.getString(R.string.pressure),result!!.pressure/1000f)
-            minPressure!!.text = String.format(resources.getString(R.string.min_pressure),result.minPressure/1000f)
-            maxPressure!!.text = String.format(resources.getString(R.string.max_pressure),result.minPressure/1000f)
-
+            result!!.let {
+                lastPressure!!.text = String.format(resources.getString(R.string.pressure), result!!.pressure / 1000f)
+                minPressure!!.text = String.format(resources.getString(R.string.min_pressure), result.minPressure / 1000f)
+                maxPressure!!.text = String.format(resources.getString(R.string.max_pressure), result.minPressure / 1000f)
+            }
             bmploaded = true
 
             if (bmploaded && dhtLoaded) {
 //                progress_main!!.visibility = View.GONE
-                progress.hide()
+                try {
+                    progress.hide()
+                } catch (ex: Exception) {
+                    Log.d("Error", ex.message)
+                }
             }
+
         }
     }
 }

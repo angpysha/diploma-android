@@ -70,7 +70,7 @@ ViewPager.OnPageChangeListener{
                 .show()
         when (position) {
             0 -> {
-                val _size = LoadSize(this).execute(0).get()
+                val _size = LoadSize(this).execute(0).get()?:1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = HumidityFragmentAdapter(supportFragmentManager, _size)
 
@@ -81,7 +81,7 @@ ViewPager.OnPageChangeListener{
             }
 
             1 -> {
-                val _size = LoadSize(this).execute(1).get()
+                val _size = LoadSize(this).execute(1).get()?:1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 1)
 
@@ -92,7 +92,7 @@ ViewPager.OnPageChangeListener{
             }
 
             2 -> {
-                val _size = LoadSize(this).execute(2).get()
+                val _size = LoadSize(this).execute(2).get()?:1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 2)
 
@@ -102,7 +102,7 @@ ViewPager.OnPageChangeListener{
                 spinner_humidity!!.onItemSelectedListener = this
             }
             3 -> {
-                val _size = LoadSize(this).execute(3).get()
+                val _size = LoadSize(this).execute(3).get()?:1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 3)
 
@@ -190,15 +190,15 @@ ViewPager.OnPageChangeListener{
         pager_humidity!!.addOnPageChangeListener(this)
     }
 
-    inner class LoadSize(context: Context) : AsyncTask<Int, Void, Int>() {
+    inner class LoadSize(context: Context) : AsyncTask<Int, Void, Int?>() {
         private lateinit var context: Context
 
         init {
             this.context = context
         }
 
-        override fun doInBackground(vararg params: Int?): Int {
-            var size = 0
+        override fun doInBackground(vararg params: Int?): Int? {
+            var size: Int? = 0
             when (params[0]) {
                 0 -> {
                     val dht = DhtController()

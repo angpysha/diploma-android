@@ -178,7 +178,7 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
             when (this.type) {
                 0 -> {
-                    data = bmp.GetByDate(date)!!.sortedBy { it.created_at }
+                    data = bmp.GetByDate(date)
                 }
                 1 -> {
                     val calendar = Calendar.getInstance()
@@ -230,12 +230,11 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         override fun onPostExecute(result: List<Bmp180_Data>?) {
             super.onPostExecute(result)
 
-            result!!.let {
-                if (result.isEmpty()) {
+                if ( result == null || result.isEmpty()) {
                     if (pressure_header == null || pressure_graph == null){
 //                        swiperefresh_pressure!!.isRefreshing = false
 //                        (activity as Pressure).progress.hide()
-                        return@let
+                        return
                     }
 
                     val ddf = SimpleDateFormat("MM\\dd\\yyyy")
@@ -244,7 +243,7 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     pressure_graph!!.title = "There is not data for this day"
                     swiperefresh_pressure!!.isRefreshing = false
                     (activity as Pressure).progress.hide()
-                    return@let
+                    return
                 }
 
                 when (type) {
@@ -252,15 +251,16 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         var list: MutableList<DataPoint> = ArrayList()
 //                val temp_gragh = view!!.findViewById<GraphView>(R.id.temperature_graph)
 //                var series = LineGraphSeries<DataPoint>()
-                        result.mapTo(list) { DataPoint(it.created_at, it.pressure.toDouble()) }
+                        result!!.mapTo(list) { DataPoint(it.created_at, it.pressure.toDouble()) }
 
                         var aas = list.toTypedArray()
+                        aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
 
                         if (series == null || pressure_graph == null) {
 //                            swiperefresh_pressure!!.isRefreshing = false
 //                            (activity as Pressure).progress.hide()
-                            return@let
+                            return
                         }
 //                 temperature_header!!.text = "hey"
 
@@ -296,14 +296,14 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
                     1 -> {
                         var list: MutableList<DataPoint> = ArrayList()
-                        result.mapTo(list) { DataPoint(it.created_at, it.pressure.toDouble()) }
+                        result!!.mapTo(list) { DataPoint(it.created_at, it.pressure.toDouble()) }
                         var aas = list.toTypedArray()
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || pressure_graph == null || series.isEmpty) {
 //                            swiperefresh_pressure!!.isRefreshing = false
 //                            (activity as Pressure).progress.hide()
-                            return@let
+                            return
                         }
                         series.isDrawDataPoints = true
                         pressure_graph!!.removeAllSeries()
@@ -330,14 +330,14 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
                     2 -> {
                         var list: MutableList<DataPoint> = ArrayList()
-                        result.mapTo(list) { DataPoint(it.created_at, it.pressure.toDouble()) }
+                        result!!.mapTo(list) { DataPoint(it.created_at, it.pressure.toDouble()) }
                         var aas = list.toTypedArray()
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || pressure_graph == null || series.isEmpty) {
 //                            swiperefresh_pressure!!.isRefreshing = false
 //                            (activity as Pressure).progress.hide()
-                            return@let
+                            return
                         }
                         series.isDrawDataPoints = true
                         pressure_graph!!.removeAllSeries()
@@ -365,14 +365,14 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
                     3 -> {
                         var list: MutableList<DataPoint> = ArrayList()
-                        result.mapTo(list) { DataPoint(it.created_at, it.pressure.toDouble()) }
+                        result!!.mapTo(list) { DataPoint(it.created_at, it.pressure.toDouble()) }
                         var aas = list.toTypedArray()
                         aas.sortBy { it.x }
                         var series = LineGraphSeries(aas)
                         if (series == null || pressure_graph == null || series.isEmpty) {
 //                            swiperefresh_pressure!!.isRefreshing = false
 //                            (activity as Pressure).progress.hide()
-                            return@let
+                            return
                         }
                         series.isDrawDataPoints = true
                         pressure_graph!!.removeAllSeries()
@@ -398,7 +398,6 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         (activity as Pressure).progress.hide()
                     }
                 }
-            }
 //            swiperefresh_pressure!!.isRefreshing = false
 //            (activity as Pressure).progress.hide()
         }
