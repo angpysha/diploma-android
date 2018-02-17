@@ -42,19 +42,19 @@ class AndroidBMPController {
         val filter = BmpSearch(date.zeroTime(), dayAfter, null, null,
                 null, null, null, null)
 
-        val data = BmpController().SearchAsync(filter, Bmp180_Data::class.java).get()
+        val data: List<Bmp180_Data>? = BmpController().SearchAsync(filter, Bmp180_Data::class.java).get()
 
         return data
     }
 
-    fun GetByDate(date: Date,type: Int): List<Bmp180_Data> {
+    fun GetByDate(date: Date,type: Int): List<Bmp180_Data>? {
         var calendar = Calendar.getInstance()
 
 
         calendar.time = date
         calendar.add(Calendar.DATE, 1)
         var dayAfter = calendar.time
-        var rest: List<Bmp180_Data> = ArrayList()
+        var rest: List<Bmp180_Data>? = ArrayList()
 
         when(type) {
             0-> {
