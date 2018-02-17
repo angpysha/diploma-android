@@ -54,6 +54,7 @@ import io.github.angpysha.diploma_bridge.Controllers.BmpController
 import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import io.github.angpysha.diploma_bridge.Models.Bmp180_Data
 import io.github.angpysha.diploma_bridge.Models.DHT11_Data
+import io.socket.emitter.Emitter
 
 
 class Main : AppCompatActivity() {
@@ -148,8 +149,22 @@ class Main : AppCompatActivity() {
 //        LoadMaxMin().execute()
         LoadPressure().execute()
 
+       val app = application as Application
 
+        val socket = app.getSocket()
+
+        socket.on("dataupdated",DataUpdated)
+
+        fab!!.setOnClickListener {
+            socket.emit("updatedata","all")
+            swiperefresh!!.isRefreshing = true
+        }
         
+    }
+
+    private val DataUpdated: Emitter.Listener = Emitter.Listener {
+        LoadAsync().execute()
+        LoadPressure().execute()
     }
 
 
