@@ -9,4 +9,5 @@
     <color name="mdtp_accent_color">#3F51B5</color>
     <color name="mdtp_accent_color_dark">#303F9F</color>
     <color name="transperent">#80000000</color>
+    <color name="yellow2">#bc9028</color>
 </resources>
