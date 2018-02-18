@@ -22,6 +22,7 @@ import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.multidex.MultiDex
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.LayoutInflaterCompat
 import android.support.v7.widget.Toolbar
 import android.util.Log
@@ -29,6 +30,7 @@ import android.view.LayoutInflater
 import android.view.View
 import co.zsmb.materialdrawerkt.builders.DrawerBuilderKt
 import co.zsmb.materialdrawerkt.builders.drawer
+import co.zsmb.materialdrawerkt.builders.footer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
 import com.afollestad.materialdialogs.MaterialDialog
@@ -74,9 +76,9 @@ class Main : AppCompatActivity() {
             progress = MaterialDialog.Builder(parent)
                     .title(resources.getString(R.string.progress_title))
                     .content(resources.getString(R.string.progress_content))
-                    .progress(true,0)
+                    .progress(true, 0)
                     .show()
-        } catch (ex:Exception) {
+        } catch (ex: Exception) {
 
         }
         LoadAsync().execute()
@@ -122,7 +124,7 @@ class Main : AppCompatActivity() {
                 identifier = 3
                 iicon = FontAwesome.Icon.faw_tint
                 onClick { _ ->
-                    val intent: Intent = Intent(this@Main,Humidity::class.java)
+                    val intent: Intent = Intent(this@Main, Humidity::class.java)
                     startActivity(intent)
                     result?.closeDrawer()
                     false
@@ -133,7 +135,7 @@ class Main : AppCompatActivity() {
                 identifier = 4
                 iicon = FontAwesome.Icon.faw_tachometer
                 onClick { _ ->
-                    val intent: Intent = Intent(this@Main,Pressure::class.java)
+                    val intent: Intent = Intent(this@Main, Pressure::class.java)
                     startActivity(intent)
                     result?.closeDrawer()
                     false
@@ -141,6 +143,11 @@ class Main : AppCompatActivity() {
 
             }
             divider { }
+
+            primaryItem(resources.getString(R.string.about)) {
+                identifier = 5
+                iicon = FontAwesome.Icon.faw_info
+            }
             toolbar = this@Main.toolbar
         }
 
@@ -149,17 +156,38 @@ class Main : AppCompatActivity() {
 //        LoadMaxMin().execute()
         LoadPressure().execute()
 
-       val app = application as Application
+        val app = application as Application
 
         val socket = app.getSocket()
 
-        socket.on("dataupdated",DataUpdated)
+        socket.on("dataupdated", DataUpdated)
 
         fab!!.setOnClickListener {
-            socket.emit("updatedata","all")
+            //            socket.emit("updatedata", "all")
+//            swiperefresh!!.isRefreshing = true
+            if (float_menu!!.visibility == View.INVISIBLE) {
+                float_menu!!.visibility = View.VISIBLE
+                fab!!.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_clear_black_24dp, null))
+            } else
+                float_menu!!.visibility = View.INVISIBLE
+                fab!!.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.update, null))
+
+        }
+
+        fab_from_server!!.setOnClickListener {
+            float_menu!!.visibility = View.INVISIBLE
+            LoadAsync().execute()
+            LoadPressure().execute()
+            swiperefresh!!.isRefreshing = true
+
+        }
+
+        fab_now!!.setOnClickListener {
+            float_menu!!.visibility = View.INVISIBLE
+            socket.emit("updatedata", "all")
             swiperefresh!!.isRefreshing = true
         }
-        
+
     }
 
     private val DataUpdated: Emitter.Listener = Emitter.Listener {
@@ -222,7 +250,7 @@ class Main : AppCompatActivity() {
         }
     }
 
-    inner class LoadMaxMin : AsyncTask<Void,Void,AndroidDHTController.MaxMin?>() {
+    inner class LoadMaxMin : AsyncTask<Void, Void, AndroidDHTController.MaxMin?>() {
         override fun doInBackground(vararg params: Void): AndroidDHTController.MaxMin? {
             val controller = AndroidDHTController()
 
@@ -241,18 +269,18 @@ class Main : AppCompatActivity() {
                 val maxH = result!!.maxH
                 val minH = result!!.minH
 
-                maxTemperature!!.text = String.format(resources.getString(R.string.maximum_temperature),maxT)
-                minTemperature!!.text = String.format(resources.getString(R.string.minimum_temperature),minT)
+                maxTemperature!!.text = String.format(resources.getString(R.string.maximum_temperature), maxT)
+                minTemperature!!.text = String.format(resources.getString(R.string.minimum_temperature), minT)
 
-                maxHumidity!!.text = String.format(resources.getString(R.string.maximum_humidity),maxH)
-                minHumidity!!.text = String.format(resources.getString(R.string.minimum_humidity),minH)
+                maxHumidity!!.text = String.format(resources.getString(R.string.maximum_humidity), maxH)
+                minHumidity!!.text = String.format(resources.getString(R.string.minimum_humidity), minH)
 
                 dhtmaxminLoaded = true
             }
         }
     }
 
-    inner class LoadPressure: AsyncTask<Void,Void,PressureDataClass?>() {
+    inner class LoadPressure : AsyncTask<Void, Void, PressureDataClass?>() {
         override fun doInBackground(vararg params: Void?): PressureDataClass? {
             val controller = AndroidBMPController()
 
