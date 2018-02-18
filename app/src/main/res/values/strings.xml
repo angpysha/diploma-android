@@ -43,4 +43,7 @@
     <string name="pressure_header">Pressure graph at \n %s</string>
     <string name="progress_title">Please, wait</string>
     <string name="progress_content">Data is loading</string>
+    <string name="about">About</string>
+    <string name="get_last">Get last</string>
+    <string name="get_now">Get now</string>
 </resources>
