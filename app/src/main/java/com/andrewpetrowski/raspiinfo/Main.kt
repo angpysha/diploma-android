@@ -18,16 +18,21 @@ package com.andrewpetrowski.raspiinfo
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.os.AsyncTask
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.multidex.MultiDex
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.LayoutInflaterCompat
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.AnimationUtils
 import co.zsmb.materialdrawerkt.builders.DrawerBuilderKt
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.builders.footer
@@ -153,7 +158,7 @@ class Main : AppCompatActivity() {
 
         result!!.setSelection(1)
 
-//        LoadMaxMin().execute()
+        LoadMaxMin().execute()
         LoadPressure().execute()
 
         val app = application as Application
@@ -161,17 +166,39 @@ class Main : AppCompatActivity() {
         val socket = app.getSocket()
 
         socket.on("dataupdated", DataUpdated)
+        val top_anim = AnimationUtils.loadAnimation(applicationContext,R.anim.slide_in_top)
+        val bottom_anim = AnimationUtils.loadAnimation(applicationContext,R.anim.slide_out_bottom)
 
+        get_now_item!!.setOnClickListener {
+            fab2!!.close(true)
+            socket.emit("updatedata", "all")
+            swiperefresh!!.isRefreshing = true
+            Snackbar.make(constrait_main,"Data updated",Snackbar.LENGTH_LONG).show()
+        }
+
+        get_last_item!!.setOnClickListener {
+            fab2!!.close(true)
+            LoadAsync().execute()
+            LoadPressure().execute()
+            swiperefresh!!.isRefreshing = true
+        }
         fab!!.setOnClickListener {
             //            socket.emit("updatedata", "all")
 //            swiperefresh!!.isRefreshing = true
             if (float_menu!!.visibility == View.INVISIBLE) {
                 float_menu!!.visibility = View.VISIBLE
-                fab!!.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_clear_black_24dp, null))
+//                float_menu!!.startAnimation(top_anim)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    fab!!.setImageDrawable(ContextCompat.getDrawable(this,  R.drawable.ic_clear_black_24dp))
+                } else {
+                    fab!!.setImageDrawable(resources.getDrawable(R.drawable.ic_clear_black_24dp))
+
+                }
+
             } else
                 float_menu!!.visibility = View.INVISIBLE
-                fab!!.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.update, null))
-
+                fab!!.setImageResource(R.drawable.update)
+//                float_menu!!.startAnimation(bottom_anim)
         }
 
         fab_from_server!!.setOnClickListener {
@@ -186,6 +213,7 @@ class Main : AppCompatActivity() {
             float_menu!!.visibility = View.INVISIBLE
             socket.emit("updatedata", "all")
             swiperefresh!!.isRefreshing = true
+            Snackbar.make(constrait_main,"Data updated",Snackbar.LENGTH_LONG).show()
         }
 
     }
