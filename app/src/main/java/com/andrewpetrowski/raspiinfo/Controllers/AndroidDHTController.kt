@@ -67,6 +67,10 @@ class AndroidDHTController {
     fun GetMaxMin(date: Date): MaxMin? {
         var data = GetByDate(date)
 
+        if (data == null || data.isEmpty()) {
+            return MaxMin(0f,0f,0f,0f)
+        }
+
         var max = data!!.maxBy { it.temperature }!!.temperature
         var min = data!!.minBy { it.temperature }!!.temperature
         var maxH = data!!.maxBy { it.humidity }!!.humidity
