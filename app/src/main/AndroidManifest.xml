@@ -40,6 +40,13 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <receiver android:name="StateWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                        android:resource="@xml/state_windget_info"></meta-data>
+        </receiver>
     </application>
 
 </manifest>

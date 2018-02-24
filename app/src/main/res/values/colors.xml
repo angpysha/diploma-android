@@ -10,4 +10,7 @@
     <color name="mdtp_accent_color_dark">#303F9F</color>
     <color name="transperent">#80000000</color>
     <color name="yellow2">#bc9028</color>
+    <color name="temperature_widget_color">#2224a4</color>
+    <color name="humidity_widget_color">#2a7739</color>
+    <color name="pressure_widget_color">#c79f1b</color>
 </resources>
