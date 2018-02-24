@@ -173,7 +173,7 @@ class Main : AppCompatActivity() {
             fab2!!.close(true)
             socket.emit("updatedata", "all")
             swiperefresh!!.isRefreshing = true
-            Snackbar.make(constrait_main,"Data updated",Snackbar.LENGTH_LONG).show()
+            Snackbar.make(fab2,resources.getString(R.string.data_updated),Snackbar.LENGTH_LONG).show()
         }
 
         get_last_item!!.setOnClickListener {
@@ -282,7 +282,7 @@ class Main : AppCompatActivity() {
         override fun doInBackground(vararg params: Void): AndroidDHTController.MaxMin? {
             val controller = AndroidDHTController()
 
-            var data = controller.GetMaxMin(Date().zeroTime())
+            var data:AndroidDHTController.MaxMin? = controller.GetMaxMin(Date().zeroTime())
 
             return data
         }

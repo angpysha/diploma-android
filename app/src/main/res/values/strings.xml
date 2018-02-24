@@ -46,4 +46,5 @@
     <string name="about">About</string>
     <string name="get_last">Get last</string>
     <string name="get_now">Get now</string>
+    <string name="data_updated">Data updated</string>
 </resources>
