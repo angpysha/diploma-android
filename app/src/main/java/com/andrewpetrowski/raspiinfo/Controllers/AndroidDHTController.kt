@@ -1,5 +1,6 @@
 package com.andrewpetrowski.raspiinfo.Controllers
 
+import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
 import com.andrewpetrowski.raspiinfo.Models.Temperature
 import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import io.github.angpysha.diploma_bridge.Models.DHT11_Data
@@ -23,7 +24,9 @@ class AndroidDHTController {
 
         var filter = DhtSearch(date, dayAfter, null, null, null, null)
 
-        var rest: List<DHT11_Data>? = DhtController().SearchAsync(filter, DHT11_Data::class.java).get()
+        val dht = DhtController()
+        dht.baseUrl = BASE_URL
+        var rest: List<DHT11_Data>? = dht.SearchAsync(filter, DHT11_Data::class.java).get()
 
         return rest
     }
@@ -36,22 +39,24 @@ class AndroidDHTController {
         calendar.add(Calendar.DATE, 1)
         var dayAfter = calendar.time
         var rest: List<DHT11_Data>? = ArrayList()
+        val dht = DhtController()
+        dht.baseUrl = BASE_URL
         when (type) {
             0 -> {
                 var filter = DhtSearch(date, dayAfter, null, null, null, null)
-                rest = DhtController().SearchAsync(filter, DHT11_Data::class.java).get()
+                rest = dht.SearchAsync(filter, DHT11_Data::class.java).get()
             }
 
             1-> {
-                rest = DhtController().GetByPeriod(date,DisplayPeriod.WEEK,DHT11_Data::class.java,DhtSearch::class.java)
+                rest = dht.GetByPeriod(date,DisplayPeriod.WEEK,DHT11_Data::class.java,DhtSearch::class.java)
             }
 
             2-> {
-                rest = DhtController().GetByPeriod(date,DisplayPeriod.MONTH,DHT11_Data::class.java,DhtSearch::class.java)
+                rest = dht.GetByPeriod(date,DisplayPeriod.MONTH,DHT11_Data::class.java,DhtSearch::class.java)
             }
 
             3 -> {
-                rest = DhtController().GetByPeriod(date,DisplayPeriod.YEAR,DHT11_Data::class.java,DhtSearch::class.java)
+                rest = dht.GetByPeriod(date,DisplayPeriod.YEAR,DHT11_Data::class.java,DhtSearch::class.java)
 
             }
         }

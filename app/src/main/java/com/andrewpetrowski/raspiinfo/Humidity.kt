@@ -32,6 +32,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Adapters.HumidityFragmentAdapter
 import com.andrewpetrowski.raspiinfo.Adapters.TemperatureFragmentAdapter
 import com.andrewpetrowski.raspiinfo.Helpers.Additionals
+import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
 import com.andrewpetrowski.raspiinfo.Models.FragmentAdapterParams
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
@@ -199,28 +200,27 @@ ViewPager.OnPageChangeListener{
 
         override fun doInBackground(vararg params: Int?): Int? {
             var size: Int? = 0
+            val dht = DhtController()
+            dht.baseUrl = BASE_URL
             when (params[0]) {
                 0 -> {
-                    val dht = DhtController()
+
                     size = dht.GetDatesCount()
                 }
 
                 1 -> {
-                    val dht = DhtController()
                     val dates = dht.GetMinMaxDate()
 
                     size = Additionals.WeeksDiff(dates[0],dates[1])+1
                 }
 
                 2 -> {
-                    val dht = DhtController()
                     val dates = dht.GetMinMaxDate()
 
                     size = Additionals.MonthDiff(dates[0],dates[1])+1
                 }
 
                 3 -> {
-                    val dht = DhtController()
                     val dates = dht.GetMinMaxDate()
 
                     size = Additionals.YearsDiff(dates[0],dates[1])+1

@@ -14,10 +14,10 @@
  *    limitations under the License.
  */
 
-package com.andrewpetrowski.raspiinfo.Models
+package com.andrewpetrowski.raspiinfo.Helpers
 
 /**
- * Created by andre on 24.02.2018.
+ * Created by andre on 09.03.2018.
  */
 
-data class WidgetResult(var temperature: Float,var humidity: Float, var pressure: Float,var time: String)
+val BASE_URL: String = "http://rasp.kl.com.ua/web/api/v1"

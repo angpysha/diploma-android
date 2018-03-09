@@ -41,6 +41,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import io.github.angpysha.diploma_bridge.Decorators.DateEx
 import com.andrewpetrowski.raspiinfo.Helpers.Additionals
+import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
 
 class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DatePickerDialog.OnDateSetListener
         , AdapterView.OnItemSelectedListener,ViewPager.OnPageChangeListener {
@@ -210,9 +211,11 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
 
         override fun doInBackground(vararg params: Int?): Int? {
             var size:Int? = 0
+            val dht = DhtController()
+            dht.baseUrl = BASE_URL
             when (params[0]) {
                 0 -> {
-                    val dht = DhtController()
+
                     size = dht.GetDatesCount()
                 }
 
@@ -224,14 +227,12 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
                 }
 
                 2 -> {
-                    val dht = DhtController()
                     val dates = dht.GetMinMaxDate()
 
                     size = Additionals.MonthDiff(dates[0],dates[1])+1
                 }
 
                 3 -> {
-                    val dht = DhtController()
                     val dates = dht.GetMinMaxDate()
 
                     size = Additionals.YearsDiff(dates[0],dates[1])+1

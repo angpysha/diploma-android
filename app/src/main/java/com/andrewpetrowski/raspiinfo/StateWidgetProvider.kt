@@ -21,11 +21,16 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.os.AsyncTask
 import android.widget.RemoteViews
+import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
+import com.andrewpetrowski.raspiinfo.Helpers.ToLocal
 import com.andrewpetrowski.raspiinfo.Models.WidgetResult
 import io.github.angpysha.diploma_bridge.Controllers.BmpController
 import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import io.github.angpysha.diploma_bridge.Models.Bmp180_Data
 import io.github.angpysha.diploma_bridge.Models.DHT11_Data
+import org.joda.time.LocalDate
+import org.joda.time.LocalDateTime
+import org.joda.time.format.DateTimeFormat
 
 /**
  * Created by andre on 24.02.2018.
@@ -35,7 +40,7 @@ class StateWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
         val size = appWidgetIds!!.size
 
-        for (i in 0..size) {
+        for (i in 0..(size-1)) {
             val widgetId = i
 
             var view: RemoteViews = RemoteViews(context!!.packageName, R.layout.widget_layout)
@@ -46,9 +51,11 @@ class StateWidgetProvider : AppWidgetProvider() {
             val humidity = String.format(context!!.resources.getString(R.string.humidity), data!!.humidity)
             val pressure = String.format(context!!.resources.getString(R.string.pressure), data!!.pressure/1000f)
 
+
             view.setTextViewText(R.id.temperature_text, temperature)
             view.setTextViewText(R.id.humidity_text, humidity)
             view.setTextViewText(R.id.pressure_text, pressure)
+            view.setTextViewText(R.id.widget_date,data!!.time)
             appWidgetManager!!.updateAppWidget(appWidgetIds[i], view)
 
         }
@@ -71,18 +78,22 @@ class StateWidgetProvider : AppWidgetProvider() {
 
         override fun doInBackground(vararg params: Void?): WidgetResult {
             val dhtController: DhtController = DhtController()
-
+            dhtController.baseUrl = BASE_URL
             val dhtdata = dhtController.GetLast(DHT11_Data::class.java)
 
             val bmpController = BmpController()
-
+            bmpController.baseUrl = BASE_URL
             val bmpdata = bmpController.GetLast(Bmp180_Data::class.java)
 
-            val data = WidgetResult(dhtdata!!.temperature, dhtdata!!.humidity, bmpdata!!.pressure)
+
+            val ttime = dhtdata!!.created_at.ToLocal()
+            val data = WidgetResult(dhtdata!!.temperature, dhtdata!!.humidity, bmpdata!!.pressure,ttime)
 
 
             return data
         }
+
+
 
 //        override fun onPostExecute(result: WidgetResult?) {
 //            super.onPostExecute(result)

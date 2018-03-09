@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_pressure.*
 import com.andrewpetrowski.raspiinfo.Adapters.PressureFragmentAdapter
 import io.github.angpysha.diploma_bridge.Controllers.BmpController
 import com.andrewpetrowski.raspiinfo.Helpers.Additionals
+import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
 
 class Pressure : AppCompatActivity(),AdapterView.OnItemSelectedListener,
 ViewPager.OnPageChangeListener{
@@ -200,28 +201,30 @@ ViewPager.OnPageChangeListener{
 
         override fun doInBackground(vararg params: Int?): Int? {
             var size: Int? = 0
+            val bmp = BmpController()
+            bmp.baseUrl = BASE_URL
             when (params[0]) {
                 0 -> {
-                    val bmp = BmpController()
+
                     size = bmp.GetDatesCount()
                 }
 
                 1 -> {
-                    val bmp = BmpController()
+
                     val dates = bmp.GetMinMaxDate()
 
                     size = Additionals.WeeksDiff(dates[0],dates[1])+2
                 }
 
                 2 -> {
-                    val bmp = BmpController()
+
                     val dates = bmp.GetMinMaxDate()
 
                     size = Additionals.MonthDiff(dates[0],dates[1])+2
                 }
 
                 3 -> {
-                    val bmp = BmpController()
+
                     val dates = bmp.GetMinMaxDate()
 
                     size = Additionals.YearsDiff(dates[0],dates[1])+2

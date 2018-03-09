@@ -16,6 +16,7 @@
 
 package com.andrewpetrowski.raspiinfo.Controllers
 
+import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
 import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
 import com.andrewpetrowski.raspiinfo.Models.PressureDataClass
 import io.github.angpysha.diploma_bridge.Controllers.BmpController
@@ -41,8 +42,10 @@ class AndroidBMPController {
 
         val filter = BmpSearch(date.zeroTime(), dayAfter, null, null,
                 null, null, null, null)
+        val bmp = BmpController()
 
-        val data: List<Bmp180_Data>? = BmpController().SearchAsync(filter, Bmp180_Data::class.java).get()
+        bmp.baseUrl = BASE_URL
+        val data: List<Bmp180_Data>? = bmp.SearchAsync(filter, Bmp180_Data::class.java).get()
 
         return data
     }
@@ -55,24 +58,25 @@ class AndroidBMPController {
         calendar.add(Calendar.DATE, 1)
         var dayAfter = calendar.time
         var rest: List<Bmp180_Data>? = ArrayList()
-
+        val bmp = BmpController()
+        bmp.baseUrl = BASE_URL
         when(type) {
             0-> {
                 val filer = BmpSearch(date,dayAfter,null,null,null,null,null,null)
 
-               rest = BmpController().SearchAsync(filer,Bmp180_Data::class.java).get()
+               rest = bmp.SearchAsync(filer,Bmp180_Data::class.java).get()
             }
 
             1 -> {
-                rest = BmpController().GetByPeriod(date,DisplayPeriod.WEEK,Bmp180_Data::class.java,BmpSearch::class.java)
+                rest = bmp.GetByPeriod(date,DisplayPeriod.WEEK,Bmp180_Data::class.java,BmpSearch::class.java)
             }
 
             2 -> {
-                rest = BmpController().GetByPeriod(date,DisplayPeriod.MONTH,Bmp180_Data::class.java,BmpSearch::class.java)
+                rest = bmp.GetByPeriod(date,DisplayPeriod.MONTH,Bmp180_Data::class.java,BmpSearch::class.java)
             }
 
             3 -> {
-                rest = BmpController().GetByPeriod(date,DisplayPeriod.YEAR,Bmp180_Data::class.java,BmpSearch::class.java)
+                rest = bmp.GetByPeriod(date,DisplayPeriod.YEAR,Bmp180_Data::class.java,BmpSearch::class.java)
             }
         }
 

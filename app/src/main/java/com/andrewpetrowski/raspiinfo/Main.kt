@@ -41,6 +41,8 @@ import co.zsmb.materialdrawerkt.draweritems.divider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidBMPController
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
+import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
+import com.andrewpetrowski.raspiinfo.Helpers.ToLocal
 import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
 import com.andrewpetrowski.raspiinfo.Models.PressureDataClass
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
@@ -248,6 +250,7 @@ class Main : AppCompatActivity() {
         override fun doInBackground(vararg p0: Void?): DHT11_Data {
             try {
                 val dhtController: DhtController = DhtController()
+                dhtController.baseUrl = BASE_URL
                 var dhtData: DHT11_Data = DHT11_Data(25f, 11f)
 
                 dhtData = dhtController.GetLast(DHT11_Data::class.java)
@@ -270,7 +273,7 @@ class Main : AppCompatActivity() {
                 lastHumidity.text = String.format(resources.getString(R.string.humidity), result.humidity)
                 lastTemperature.text = String.format(resources.getString(R.string.temperature), result.temperature)
                 val df = SimpleDateFormat("MM/dd/yyyy HH:mm")
-                dateText.text = String.format(resources.getString(R.string.last_date), df.format(result.created_at))
+                dateText.text = String.format(resources.getString(R.string.last_date), result.created_at.ToLocal())
                 swiperefresh.isRefreshing = false
 
                 dhtLoaded = true
