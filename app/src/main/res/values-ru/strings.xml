@@ -37,4 +37,14 @@
     <string name="last_pressure">Давление:</string>
     <string name="pressure">%03.1f кПа</string>
     <string name="drawer_pressure">Давление</string>
+    <string name="pressure_title">График давления</string>
+    <string name="pressure_header">График давления в  %s</string>
+    <string name="progress_title">Пожалуйста, подождите</string>
+    <string name="progress_content">Идет загрузка</string>
+    <string name="about">О программе</string>
+    <string name="get_last">Обновить</string>
+    <string name="get_now">Сейчас</string>
+    <string name="data_updated">Обновлено</string>
+    <string name="title_activity_about">О программе</string>
+    <string name="action_settings">Настройки</string>
 </resources>

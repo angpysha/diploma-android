@@ -38,4 +38,14 @@
     <string name="last_pressure">Тиск:</string>
     <string name="pressure">%03.1f кПа</string>
     <string name="drawer_pressure">Тиск</string>
+    <string name="pressure_title">Графік тиску</string>
+    <string name="pressure_header">Графік тиску в   %s</string>
+    <string name="progress_title">Будь ласка, зачекайте</string>
+    <string name="progress_content">Завантаження</string>
+    <string name="about">Про програму</string>
+    <string name="get_last">Оновити</string>
+    <string name="get_now">Зараз</string>
+    <string name="data_updated">Оновлено</string>
+    <string name="title_activity_about">Про програму</string>
+    <string name="action_settings">Налаштування</string>
 </resources>
