@@ -2,7 +2,9 @@ package com.andrewpetrowski.raspiinfo.Helpers
 
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
 import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 import org.joda.time.Weeks
+import org.joda.time.format.DateTimeFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -19,6 +21,15 @@ fun Date.zeroTime() : Date {
     calendar.set(Calendar.MINUTE,0)
     calendar.set(Calendar.HOUR_OF_DAY,0)
     return calendar.time
+}
+
+fun Date.ToLocal() : String {
+    val time = LocalDateTime(this)
+    val dtf = DateTimeFormat.forPattern("dd MMMM yyyy HH:mm:ss")
+
+    val ttime = time.toString(dtf)
+
+    return ttime
 }
 
 

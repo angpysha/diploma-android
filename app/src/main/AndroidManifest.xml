@@ -28,7 +28,9 @@
         <activity android:name=".TemperatureActivity">
             <intent-filter>
                 <action android:name="android.intent.action.GET_TEMPERATURES" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
@@ -36,17 +38,27 @@
         <activity android:name=".Pressure">
             <intent-filter>
                 <action android:name="android.intent.action.GET_PRESSURES" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <receiver android:name="StateWidgetProvider">
+
+        <receiver android:name=".StateWidgetProvider">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                        android:resource="@xml/state_windget_info"></meta-data>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/state_windget_info" />
         </receiver>
+
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Andrew Petrowsky
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,53 +14,128 @@
   ~    limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bordered">
+    android:background="@drawable/bordered_with_alpha"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/temperature_text"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/exo_2_medium"
-        android:text="TextView"
-        android:textColor="@color/temperature_widget_color"
-        android:textSize="26sp"
-        android:layout_gravity="center_vertical|left"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/humidity_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/exo_2_medium"
-        android:text="TextView"
-        android:textColor="@color/humidity_widget_color"
-        android:textSize="26sp"
-        android:layout_gravity="center"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|start"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="2dp">
 
-    <TextView
-        android:id="@+id/pressure_text"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/exo_2_light"
+                android:text="@string/last_temperature"
+                android:textColor="@color/temperature_widget_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/temperature_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="1dp"
+                android:fontFamily="@font/exo_2_medium"
+                android:text="TextView"
+                android:textColor="@color/temperature_widget_color"
+                android:textSize="26sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="2dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:fontFamily="@font/exo_2_light"
+                android:text="@string/last_humidity"
+                android:textColor="@color/humidity_widget_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/humidity_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="1dp"
+                android:fontFamily="@font/exo_2_medium"
+                android:text="TextView"
+                android:textColor="@color/humidity_widget_color"
+                android:textSize="26sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|end"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="2dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/exo_2_light"
+                android:text="@string/last_pressure"
+                android:textColor="@color/pressure_widget_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/pressure_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="1dp"
+                android:fontFamily="@font/exo_2_medium"
+                android:text="TextView"
+                android:textColor="@color/pressure_widget_color"
+                android:textSize="26sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/exo_2_medium"
-        android:text="TextView"
-        android:textColor="@color/pressure_widget_color"
-        android:textSize="26sp"
-        android:layout_gravity="center_vertical|right"/>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/widget_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:fontFamily="@font/exo_2_thin"
+            android:gravity="left"
+            android:text="Text"
+            android:textColor="@color/primary_dark"
+            android:textSize="14sp" />
+    </LinearLayout>
+
 </LinearLayout>
