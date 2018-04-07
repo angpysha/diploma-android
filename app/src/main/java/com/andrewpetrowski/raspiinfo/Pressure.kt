@@ -210,7 +210,6 @@ ViewPager.OnPageChangeListener{
                 }
 
                 1 -> {
-
                     val dates = bmp.GetMinMaxDate()
 
                     size = Additionals.WeeksDiff(dates[0],dates[1])+2

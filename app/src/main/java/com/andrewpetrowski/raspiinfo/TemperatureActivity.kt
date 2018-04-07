@@ -220,7 +220,6 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
                 }
 
                 1 -> {
-                    val dht = DhtController()
                     val dates = dht.GetMinMaxDate()
 
                     size = Additionals.WeeksDiff(dates[0],dates[1])+1

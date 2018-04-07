@@ -14,28 +14,20 @@
  *    limitations under the License.
  */
 
-package com.andrewpetrowski.raspiinfo.Helpers
+package com.andrewpetrowski.raspiinfo.Services
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.app.Service
+import android.content.Intent
+import android.os.IBinder
 
-/**
- * Created by andre on 07.01.2018.
- */
+class UpdateService : Service() {
 
-class Prefferences private constructor(){
-
-    private lateinit var prefs: SharedPreferences
-
-    init {
-
+    override fun onBind(intent: Intent): IBinder? {
+        // TODO: Return the communication channel to the service.
+        throw UnsupportedOperationException("Not yet implemented")
     }
 
-    private object Holder { val INSTANCE = Prefferences()}
-
-    companion object {
-        val instance: Prefferences by lazy { Holder.INSTANCE }
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return super.onStartCommand(intent, flags, startId)
     }
-
-
 }

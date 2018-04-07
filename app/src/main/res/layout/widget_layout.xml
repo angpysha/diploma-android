@@ -23,14 +23,14 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|start"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|start"
             android:orientation="vertical"
             android:padding="2dp">
 
@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="vertical"
             android:padding="2dp">
 
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|end"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|end"
             android:orientation="vertical"
             android:padding="2dp">
 
@@ -138,4 +138,16 @@
             android:textSize="14sp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginRight="10dp">
+
+        <ImageButton
+            android:id="@+id/update_widget_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_name" />
+    </LinearLayout>
 </LinearLayout>

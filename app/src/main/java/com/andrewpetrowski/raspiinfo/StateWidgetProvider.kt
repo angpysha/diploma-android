@@ -16,10 +16,14 @@
 
 package com.andrewpetrowski.raspiinfo
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.os.AsyncTask
+import android.util.Log
 import android.widget.RemoteViews
 import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
 import com.andrewpetrowski.raspiinfo.Helpers.ToLocal
@@ -37,43 +41,65 @@ import org.joda.time.format.DateTimeFormat
  */
 
 class StateWidgetProvider : AppWidgetProvider() {
+    private val UPDATE_DATA = "Update"
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
-        val size = appWidgetIds!!.size
-
-        for (i in 0..(size-1)) {
-            val widgetId = i
-
-            var view: RemoteViews = RemoteViews(context!!.packageName, R.layout.widget_layout)
-
-            view.setTextViewText(R.id.temperature_text, "fdasfsa")
-            val data = GetData(view, context, appWidgetManager, appWidgetIds[i]).execute().get()
-            val temperature = String.format(context!!.resources.getString(R.string.temperature), data!!.temperature)
-            val humidity = String.format(context!!.resources.getString(R.string.humidity), data!!.humidity)
-            val pressure = String.format(context!!.resources.getString(R.string.pressure), data!!.pressure/1000f)
-
-
-            view.setTextViewText(R.id.temperature_text, temperature)
-            view.setTextViewText(R.id.humidity_text, humidity)
-            view.setTextViewText(R.id.pressure_text, pressure)
-            view.setTextViewText(R.id.widget_date,data!!.time)
-            appWidgetManager!!.updateAppWidget(appWidgetIds[i], view)
-
-        }
-
         super.onUpdate(context, appWidgetManager, appWidgetIds)
+        val size = appWidgetIds!!.size
+        Log.d("updating", "windget")
+
+        var view: RemoteViews = RemoteViews(context!!.packageName, R.layout.widget_layout)
+        val data = GetData(view, context, appWidgetManager).execute().get()
+        val temperature = String.format(context!!.resources.getString(R.string.temperature), data!!.temperature)
+        val humidity = String.format(context!!.resources.getString(R.string.humidity), data!!.humidity)
+        val pressure = String.format(context!!.resources.getString(R.string.pressure), data!!.pressure / 1000f)
+        view.setTextViewText(R.id.temperature_text, temperature)
+        view.setTextViewText(R.id.humidity_text, humidity)
+        view.setTextViewText(R.id.pressure_text, pressure)
+        view.setTextViewText(R.id.widget_date, data!!.time)
+        val intSync = Intent(context, StateWidgetProvider::class.java)
+        intSync.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+
+        val pendInt = PendingIntent.getBroadcast(context, 0, intSync, PendingIntent.FLAG_UPDATE_CURRENT)
+        view.setOnClickPendingIntent(R.id.update_widget_button, pendInt)
+        val intt = Intent(context, javaClass)
+        intt.action = UPDATE_DATA
+        val pendin = PendingIntent.getBroadcast(context, 0, intt, 0)
+        view.setOnClickPendingIntent(R.id.update_widget_button, pendin)
+        val thisWidget = ComponentName(context, StateWidgetProvider::class.java)
+        AppWidgetManager.getInstance(context).updateAppWidget(thisWidget, view)
+        //    appWidgetManager!!.updateAppWidget(appWidgetIds,view)
+
+
     }
 
-    inner class GetData(views: RemoteViews, context: Context?, widgetManager: AppWidgetManager?, widgetId: Int) : AsyncTask<Void, Void, WidgetResult>() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        super.onReceive(context, intent)
+ //       if (UPDATE_DATA.equals(intent!!.action) )
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val remoteViews = RemoteViews(context!!.packageName, R.layout.widget_layout)
+        val componentName = ComponentName(context, StateWidgetProvider::class.java)
+        val data = GetData(remoteViews, context, appWidgetManager).execute().get()
+        val temperature = String.format(context!!.resources.getString(R.string.temperature), data!!.temperature)
+        val humidity = String.format(context!!.resources.getString(R.string.humidity), data!!.humidity)
+        val pressure = String.format(context!!.resources.getString(R.string.pressure), data!!.pressure / 1000f)
+        remoteViews.setTextViewText(R.id.temperature_text, temperature)
+        remoteViews.setTextViewText(R.id.humidity_text, humidity)
+        remoteViews.setTextViewText(R.id.pressure_text, pressure)
+        remoteViews.setTextViewText(R.id.widget_date, data!!.time)
+
+
+        appWidgetManager.updateAppWidget(componentName, remoteViews)
+    }
+
+    inner class GetData(views: RemoteViews, context: Context?, widgetManager: AppWidgetManager?) : AsyncTask<Void, Void, WidgetResult>() {
         private lateinit var _views: RemoteViews
         private var _context: Context?
         private var _widgetManager: AppWidgetManager?
-        private var _widgetId: Int
 
         init {
             this._views = views
             this._context = context
             this._widgetManager = widgetManager
-            this._widgetId = widgetId
         }
 
         override fun doInBackground(vararg params: Void?): WidgetResult {
@@ -87,12 +113,11 @@ class StateWidgetProvider : AppWidgetProvider() {
 
 
             val ttime = dhtdata!!.created_at.ToLocal()
-            val data = WidgetResult(dhtdata!!.temperature, dhtdata!!.humidity, bmpdata!!.pressure,ttime)
+            val data = WidgetResult(dhtdata!!.temperature, dhtdata!!.humidity, bmpdata!!.pressure, ttime)
 
 
             return data
         }
-
 
 
 //        override fun onPostExecute(result: WidgetResult?) {
