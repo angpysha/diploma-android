@@ -19,6 +19,7 @@ package com.andrewpetrowski.raspiinfo
 import android.content.Context
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
+import com.orm.SugarApp
 import io.socket.client.IO
 import io.socket.client.Socket
 import net.danlew.android.joda.JodaTimeAndroid
@@ -27,7 +28,7 @@ import net.danlew.android.joda.JodaTimeAndroid
  * Created by andre on 28.12.2017.
  */
 
-class Application : MultiDexApplication() {
+class Application : SugarApp() {
     private lateinit var socket : Socket
 
     override fun attachBaseContext(newBase: Context?) {
