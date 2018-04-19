@@ -36,9 +36,9 @@ class BMP180() : SugarRecord<BMP180>() {
     var pressure: Double? = 0.0
     var temperature: Double? =0.0
     var altitude: Double? = 0.0
-    var date: Long? = 0
+    var date: String = ""
 
-    constructor(pressure: Double?,temperature: Double?,altitude: Double?,date: Long?) : this() {
+    constructor(pressure: Double?,temperature: Double?,altitude: Double?,date: String) : this() {
         this.altitude = altitude
         this.pressure = pressure
         this.temperature = temperature

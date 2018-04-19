@@ -78,6 +78,16 @@ fun String.toDate() : Date {
     return df.parse(this)
 }
 
+fun Date.toSQLiteString() : String {
+    val df  = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    return df.format(this)
+}
+
+fun String.fromSQLiteString() : Date {
+    val df  = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    return df.parse(this)
+}
+
 fun checkAvailable(date: Date) : Boolean {
     val dhtcon = AndroidDHTController()
 
@@ -88,5 +98,14 @@ fun checkAvailable(date: Date) : Boolean {
 
 fun <T> List<out T>.getLast(): T {
     return this[this.size-1]
+}
+
+fun Date.getMilis(): Long {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+
+    val time = calendar.timeInMillis
+
+    return time
 }
 

@@ -34,9 +34,11 @@ import kotlinx.android.synthetic.main.fragment_pressure.*
 import java.util.*
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidBMPController
 import com.andrewpetrowski.raspiinfo.Helpers.*
+import com.andrewpetrowski.raspiinfo.Records.Temperature
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import com.orm.SugarRecord
 import java.text.SimpleDateFormat
 
 
@@ -175,6 +177,7 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             val date: Date = params[0]!!.date!!.zeroTime()
             var data: List<Bmp180_Data>? = ArrayList()
             this.type = params[0]!!.type
+
 
             when (this.type) {
                 0 -> {
