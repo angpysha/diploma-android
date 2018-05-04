@@ -18,6 +18,7 @@ package com.andrewpetrowski.raspiinfo
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.AsyncTask
 import android.os.Build
@@ -41,9 +42,8 @@ import co.zsmb.materialdrawerkt.draweritems.divider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidBMPController
 import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
-import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
-import com.andrewpetrowski.raspiinfo.Helpers.ToLocal
-import com.andrewpetrowski.raspiinfo.Helpers.zeroTime
+import com.andrewpetrowski.raspiinfo.Helpers.*
+import com.andrewpetrowski.raspiinfo.Models.AllData
 import com.andrewpetrowski.raspiinfo.Models.PressureDataClass
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.fontawesome_typeface_library.FontAwesome.Icon.faw_home
@@ -62,7 +62,9 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import io.github.angpysha.diploma_bridge.Controllers.BmpController
 import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import io.github.angpysha.diploma_bridge.Models.Bmp180_Data
+import io.github.angpysha.diploma_bridge.Models.BmpSearch
 import io.github.angpysha.diploma_bridge.Models.DHT11_Data
+import io.github.angpysha.diploma_bridge.Models.DhtSearch
 import io.socket.emitter.Emitter
 
 
@@ -72,6 +74,7 @@ class Main : AppCompatActivity() {
     private var dhtLoaded = false
     private var dhtmaxminLoaded = false
     private var bmploaded = false
+    private lateinit var prefs: SharedPreferences
 
     private lateinit var progress: MaterialDialog
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,6 +91,7 @@ class Main : AppCompatActivity() {
         } catch (ex: Exception) {
 
         }
+
         LoadAsync().execute()
 
         swiperefresh?.setOnRefreshListener {
@@ -217,7 +221,11 @@ class Main : AppCompatActivity() {
             swiperefresh!!.isRefreshing = true
             Snackbar.make(constrait_main,"Data updated",Snackbar.LENGTH_LONG).show()
         }
-
+        prefs = getSharedPreferences(SHARED_PREFSNAME,0)
+        val isFirstRun = prefs!!.getBoolean(IS_FIRST_RUN,true)
+        if (isFirstRun) {
+            FirstLoad().execute()
+        }
     }
 
     private val DataUpdated: Emitter.Listener = Emitter.Listener {
@@ -337,5 +345,29 @@ class Main : AppCompatActivity() {
             }
 
         }
+    }
+
+    inner class FirstLoad : AsyncTask<Boolean,Void,AllData?>() {
+        override fun doInBackground(vararg p0: Boolean?): AllData? {
+            val dhtcontroller = DhtController()
+            dhtcontroller.baseUrl = BASE_URL
+            val dhtDates = dhtcontroller.GetMinMaxDate()
+            val dhtFIlter = DhtSearch(dhtDates[0],dhtDates[1])
+            val bmpController = BmpController()
+            bmpController.baseUrl = BASE_URL
+            val bmpDates = bmpController.GetMinMaxDate()
+            var bmpSearchFIlter = BmpSearch(bmpDates[0],bmpDates[1])
+            val dht11 = dhtcontroller.Search(dhtFIlter,DHT11_Data::class.java)
+            val bmp180 = bmpController.Search(bmpSearchFIlter,Bmp180_Data::class.java)
+
+           val dat = AllData(bmp180,dht11)
+            return dat
+        }
+
+        override fun onPostExecute(result: AllData?) {
+            super.onPostExecute(result)
+
+        }
+
     }
 }
