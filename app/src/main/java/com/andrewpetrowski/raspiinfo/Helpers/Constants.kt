@@ -21,3 +21,5 @@ package com.andrewpetrowski.raspiinfo.Helpers
  */
 
 val BASE_URL: String = "http://rasp.kl.com.ua/web/api/v1"
+val SHARED_PREFSNAME: String = "com.andrewpetrowski.raspiinfo.prefs"
+val IS_FIRST_RUN: String = "first_run"
