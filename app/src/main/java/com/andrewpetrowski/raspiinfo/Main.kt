@@ -45,6 +45,8 @@ import com.andrewpetrowski.raspiinfo.Controllers.AndroidDHTController
 import com.andrewpetrowski.raspiinfo.Helpers.*
 import com.andrewpetrowski.raspiinfo.Models.AllData
 import com.andrewpetrowski.raspiinfo.Models.PressureDataClass
+import com.andrewpetrowski.raspiinfo.Records.BMP180
+import com.andrewpetrowski.raspiinfo.Records.DHT11
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.fontawesome_typeface_library.FontAwesome.Icon.faw_home
 import com.mikepenz.iconics.Iconics
@@ -59,6 +61,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
+import com.orm.SugarRecord
 import io.github.angpysha.diploma_bridge.Controllers.BmpController
 import io.github.angpysha.diploma_bridge.Controllers.DhtController
 import io.github.angpysha.diploma_bridge.Models.Bmp180_Data
@@ -228,6 +231,7 @@ class Main : AppCompatActivity() {
         }
     }
 
+
     private val DataUpdated: Emitter.Listener = Emitter.Listener {
         LoadAsync().execute()
         LoadPressure().execute()
@@ -366,7 +370,21 @@ class Main : AppCompatActivity() {
 
         override fun onPostExecute(result: AllData?) {
             super.onPostExecute(result)
+            result!!.bmp!!.forEach { x ->
+                var bmp = BMP180(x!!.pressure.toDouble(),x!!.temperature.toDouble(),
+                        x!!.altitude.toDouble(),x!!.created_at.toSQLiteString())
+                bmp.save()
+            }
 
+            result!!.dht!!.forEach { x ->
+                var dht = DHT11(x!!.temperature.toDouble(), x!!.humidity.toDouble(),
+                        x!!.created_at.toSQLiteString())
+                dht.save()
+            }
+
+            val edit = prefs!!.edit()
+            edit.putBoolean(IS_FIRST_RUN,false)
+            edit.apply()
         }
 
     }
