@@ -26,9 +26,9 @@ import java.util.*
 class DHT11() : SugarRecord<DHT11>() {
     var temperature: Double? = 0.0
     var humidity: Double? =0.0
-    var date: Int? = 0
+    var date: String? = ""
 
-    constructor(temperature: Double?,humidity: Double?,date: Int?) : this() {
+    constructor(temperature: Double?,humidity: Double?,date: String?) : this() {
         this.temperature = temperature
         this.humidity = humidity
         this.date = date
