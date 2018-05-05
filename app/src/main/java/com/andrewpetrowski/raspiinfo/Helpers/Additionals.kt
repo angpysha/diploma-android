@@ -16,10 +16,7 @@
 
 package com.andrewpetrowski.raspiinfo.Helpers
 
-import org.joda.time.DateTime
-import org.joda.time.Months
-import org.joda.time.Weeks
-import org.joda.time.Years
+import org.joda.time.*
 import java.time.Month
 import java.time.Year
 import java.util.*
@@ -58,6 +55,12 @@ class Additionals {
                 }
             }
 
+        }
+
+        fun DaysDiff(date1: Date,date2: Date):Int {
+            val datetime1: DateTime = DateTime(date1)
+            val datetime2:DateTime = DateTime(date2)
+            return Days.daysBetween(datetime1,datetime2).days
         }
 
         fun WeeksDiff(date1: Date,date2: Date) :Int {
