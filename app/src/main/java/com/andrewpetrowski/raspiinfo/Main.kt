@@ -168,7 +168,7 @@ class Main : AppCompatActivity() {
         result!!.setSelection(1)
 
         LoadMaxMin().execute()
-        LoadPressure().execute()
+        LoadPressure(applicationContext).execute()
 
         val app = application as Application
 
@@ -188,7 +188,7 @@ class Main : AppCompatActivity() {
         get_last_item!!.setOnClickListener {
             fab2!!.close(true)
             LoadAsync().execute()
-            LoadPressure().execute()
+            LoadPressure(applicationContext).execute()
             swiperefresh!!.isRefreshing = true
         }
         fab!!.setOnClickListener {
@@ -213,7 +213,7 @@ class Main : AppCompatActivity() {
         fab_from_server!!.setOnClickListener {
             float_menu!!.visibility = View.INVISIBLE
             LoadAsync().execute()
-            LoadPressure().execute()
+            LoadPressure(applicationContext).execute()
             swiperefresh!!.isRefreshing = true
 
         }
@@ -234,7 +234,7 @@ class Main : AppCompatActivity() {
 
     private val DataUpdated: Emitter.Listener = Emitter.Listener {
         LoadAsync().execute()
-        LoadPressure().execute()
+        LoadPressure(applicationContext).execute()
     }
 
 
@@ -323,11 +323,16 @@ class Main : AppCompatActivity() {
         }
     }
 
-    inner class LoadPressure : AsyncTask<Void, Void, PressureDataClass?>() {
+    inner class LoadPressure(context: Context) : AsyncTask<Void, Void, PressureDataClass?>() {
+        private lateinit var _context: Context
+
+        init {
+            _context = context
+        }
         override fun doInBackground(vararg params: Void?): PressureDataClass? {
             val controller = AndroidBMPController()
 
-            return controller.GetMaxMinLast(Date().zeroTime())
+            return controller.GetMaxMinLast(Date().zeroTime(),_context)
         }
 
         override fun onPostExecute(result: PressureDataClass?) {
@@ -365,23 +370,22 @@ class Main : AppCompatActivity() {
             val bmp180 = bmpController.Search(bmpSearchFIlter,Bmp180_Data::class.java)
 
            val dat = AllData(bmp180,dht11)
-            return dat
-        }
-
-        override fun onPostExecute(result: AllData?) {
-            super.onPostExecute(result)
-            result!!.bmp!!.forEach { x ->
+            dat!!.bmp!!.forEach { x ->
                 var bmp = BMP180(x!!.pressure.toDouble(),x!!.temperature.toDouble(),
                         x!!.altitude.toDouble(),x!!.created_at.toSQLiteString())
                 bmp.save()
             }
 
-            result!!.dht!!.forEach { x ->
+            dat!!.dht!!.forEach { x ->
                 var dht = DHT11(x!!.temperature.toDouble(), x!!.humidity.toDouble(),
                         x!!.created_at.toSQLiteString())
                 dht.save()
             }
+            return dat
+        }
 
+        override fun onPostExecute(result: AllData?) {
+            super.onPostExecute(result)
             val edit = prefs!!.edit()
             edit.putBoolean(IS_FIRST_RUN,false)
             edit.apply()

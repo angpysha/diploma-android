@@ -16,6 +16,8 @@
 
 package com.andrewpetrowski.raspiinfo.Controllers
 
+import android.content.Context
+import com.andrewpetrowski.raspiinfo.Enums.EORMFilter
 import com.andrewpetrowski.raspiinfo.Helpers.*
 import com.andrewpetrowski.raspiinfo.Models.PressureDataClass
 import com.andrewpetrowski.raspiinfo.Records.BMP180
@@ -35,7 +37,7 @@ import kotlin.collections.ArrayList
 class AndroidBMPController {
 
     //TODO: CHECK FOR NULL
-    fun GetByDate(date: Date,internetAccess:Boolean = true): List<Bmp180_Data>? {
+    fun GetByDate(date: Date, internetAccess: Boolean = true): List<Bmp180_Data>? {
         var calendar = Calendar.getInstance()
 
 
@@ -50,7 +52,7 @@ class AndroidBMPController {
         bmp.baseUrl = BASE_URL
         var data: MutableList<Bmp180_Data>?
         try {
-            val localData = SugarRecord.find(BMP180::class.java,"date > ? and date < ?", date.toSQLiteString(),
+            val localData = SugarRecord.find(BMP180::class.java, "date > ? and date < ?", date.toSQLiteString(),
                     dayAfter.toSQLiteString())
             //val localData2= localData.filter { it -> it.date!! >  date && it.date!! < dayAfter.time }
             val all = SugarRecord.listAll(BMP180::class.java)
@@ -58,38 +60,38 @@ class AndroidBMPController {
             val tmpCalendar = Calendar.getInstance()
             tmpCalendar.time = tmpDate
             val hours = tmpCalendar.get(Calendar.HOUR_OF_DAY)
-            if (localData.isEmpty() || (internetAccess && localData.count() < hours)) {
+            if (localData.isEmpty() || internetAccess) {
                 data = bmp.SearchAsync(filter, Bmp180_Data::class.java).get()
-                data.forEach {x ->
-                    var bmpp = BMP180(x!!.pressure.toDouble(),x!!.temperature.toDouble(),
-                            x!!.altitude.toDouble(),x!!.created_at.toSQLiteString())
-                    bmpp.save()
+                data.forEach { x ->
+                    var bmpp = BMP180(x!!.pressure.toDouble(), x!!.temperature.toDouble(),
+                            x!!.altitude.toDouble(), x!!.created_at.toSQLiteString())
+                    if (!localData.any { x -> x.date == bmpp.date })
+                        bmpp.save()
                 }
 
-            } else
-            {
+            } else {
                 data = ArrayList<Bmp180_Data>()
 
                 localData.forEach { x ->
-                    val date = Date(x!!.date)
-                    val bmp180_elem = Bmp180_Data(date,null,x!!.temperature!!.toFloat(),
-                            x!!.altitude!!.toFloat(),x!!.pressure!!.toFloat())
+                    val date = x.date!!.fromSQLiteString()
+                    val bmp180_elem = Bmp180_Data(date, null, x!!.temperature!!.toFloat(),
+                            x!!.altitude!!.toFloat(), x!!.pressure!!.toFloat())
                     data!!.add(bmp180_elem)
                 }
             }
-        } catch (ex:Exception)
-        {
-            data = bmp.SearchAsync(filter, Bmp180_Data::class.java).get()
-            data.forEach {x ->
-                var bmpp = BMP180(x!!.pressure.toDouble(),x!!.temperature.toDouble(),
-                        x!!.altitude.toDouble(),x!!.created_at.toSQLiteString())
-                bmpp.save()
-            }
+        } catch (ex: Exception) {
+//            data = bmp.SearchAsync(filter, Bmp180_Data::class.java).get()
+//            data.forEach { x ->
+//                var bmpp = BMP180(x!!.pressure.toDouble(), x!!.temperature.toDouble(),
+//                        x!!.altitude.toDouble(), x!!.created_at.toSQLiteString())
+//                bmpp.save()
+//            }
+            return null
         }
         return data
     }
 
-    fun GetByDate(date: Date,type: Int): List<Bmp180_Data>? {
+    fun GetByDate(date: Date, type: Int, internetAccess: Boolean = true): List<Bmp180_Data>? {
         var calendar = Calendar.getInstance()
 
 
@@ -99,26 +101,26 @@ class AndroidBMPController {
         var rest: MutableList<Bmp180_Data>? = ArrayList()
         val bmp = BmpController()
         bmp.baseUrl = BASE_URL
-        when(type) {
-            0-> {
-                val filer = BmpSearch(date,dayAfter,null,null,null,null,null,null)
-                val localData = SugarRecord.find(BMP180::class.java,"date >= ${date.toFormatedString()} and date <= ${dayAfter.toFormatedString()}")
-                if (localData.isEmpty()) {
-                    rest = bmp.SearchAsync(filer,Bmp180_Data::class.java).get()
+        when (type) {
+            0 -> {
+                val filer = BmpSearch(date, dayAfter, null, null, null, null, null, null)
+                val localData = SugarRecord.find(BMP180::class.java, "date >= ${date.toFormatedString()} and date <= ${dayAfter.toFormatedString()}")
+                if (localData.isEmpty() || internetAccess) {
+                    rest = bmp.SearchAsync(filer, Bmp180_Data::class.java).get()
                     rest.forEach { x ->
-                        var bmpp = BMP180(x!!.pressure.toDouble(),x!!.temperature.toDouble(),
-                                x!!.altitude.toDouble(),x!!.created_at.toSQLiteString())
-                        bmpp.save()
+                        var bmpp = BMP180(x!!.pressure.toDouble(), x!!.temperature.toDouble(),
+                                x!!.altitude.toDouble(), x!!.created_at.toSQLiteString())
+                        if (!localData.any { x -> x.date == bmpp.date })
+                            bmpp.save()
 
                     }
-                }
-                else {
+                } else {
                     rest = ArrayList<Bmp180_Data>()
 
                     localData.forEach { x ->
-                        val date = Date(x!!.date!!)
-                        val bmp180_elem = Bmp180_Data(date,null,x!!.temperature!!.toFloat(),
-                                x!!.altitude!!.toFloat(),x!!.pressure!!.toFloat())
+                        val date = x!!.date.fromSQLiteString()
+                        val bmp180_elem = Bmp180_Data(date, null, x!!.temperature!!.toFloat(),
+                                x!!.altitude!!.toFloat(), x!!.pressure!!.toFloat())
                         rest!!.add(bmp180_elem)
                     }
                 }
@@ -126,23 +128,81 @@ class AndroidBMPController {
             }
 
             1 -> {
-                rest = bmp.GetByPeriod(date,DisplayPeriod.WEEK,Bmp180_Data::class.java,BmpSearch::class.java)
+                val ormbmp = ORMBMPController()
+                val localdata = ormbmp.GetByPeriod(date, EORMFilter.Week, BMP180::class.java);
+                if (localdata!!.isEmpty() || internetAccess) {
+                    rest = bmp.GetByPeriod(date, DisplayPeriod.WEEK, Bmp180_Data::class.java, BmpSearch::class.java)
+                    rest.forEach { x ->
+                        var bmpp = BMP180(x!!.pressure.toDouble(), x!!.temperature.toDouble(),
+                                x!!.altitude.toDouble(), x!!.created_at.toSQLiteString())
+                        if (!localdata.any { x -> x.date == bmpp.date })
+                            bmpp.save()
+
+                    }
+                } else {
+                    rest = ArrayList()
+                    localdata.forEach { x ->
+                        val date = x!!.date.fromSQLiteString()
+                        val bmp180_elem = Bmp180_Data(date, null, x!!.temperature!!.toFloat(),
+                                x!!.altitude!!.toFloat(), x!!.pressure!!.toFloat())
+                        rest!!.add(bmp180_elem)
+                    }
+                }
             }
 
             2 -> {
-                rest = bmp.GetByPeriod(date,DisplayPeriod.MONTH,Bmp180_Data::class.java,BmpSearch::class.java)
+                val ormbmp = ORMBMPController()
+                val localdata = ormbmp.GetByPeriod(date, EORMFilter.Month, BMP180::class.java)
+                if (localdata!!.isEmpty()) {
+                    rest = bmp.GetByPeriod(date, DisplayPeriod.MONTH, Bmp180_Data::class.java, BmpSearch::class.java)
+                    rest.forEach { x ->
+                        var bmpp = BMP180(x!!.pressure.toDouble(), x!!.temperature.toDouble(),
+                                x!!.altitude.toDouble(), x!!.created_at.toSQLiteString())
+                        if (!localdata.any { x -> x.date == bmpp.date })
+                            bmpp.save()
+
+                    }
+                } else {
+                    rest = ArrayList()
+                    localdata.forEach { x ->
+                        val date = x!!.date.fromSQLiteString()
+                        val bmp180_elem = Bmp180_Data(date, null, x!!.temperature!!.toFloat(),
+                                x!!.altitude!!.toFloat(), x!!.pressure!!.toFloat())
+                        rest!!.add(bmp180_elem)
+                    }
+                }
             }
 
             3 -> {
-                rest = bmp.GetByPeriod(date,DisplayPeriod.YEAR,Bmp180_Data::class.java,BmpSearch::class.java)
+                val ormbmp = ORMBMPController()
+                val localdata = ormbmp.GetByPeriod(date, EORMFilter.Year, BMP180::class.java)
+                if (localdata!!.isEmpty()) {
+                    rest = bmp.GetByPeriod(date, DisplayPeriod.YEAR, Bmp180_Data::class.java, BmpSearch::class.java)
+                    rest.forEach { x ->
+                        var bmpp = BMP180(x!!.pressure.toDouble(), x!!.temperature.toDouble(),
+                                x!!.altitude.toDouble(), x!!.created_at.toSQLiteString())
+                        if (!localdata.any { x -> x.date == bmpp.date })
+                            bmpp.save()
+
+                    }
+                } else {
+                    rest = ArrayList()
+                    localdata.forEach { x ->
+                        val date = x!!.date.fromSQLiteString()
+                        val bmp180_elem = Bmp180_Data(date, null, x!!.temperature!!.toFloat(),
+                                x!!.altitude!!.toFloat(), x!!.pressure!!.toFloat())
+                        rest!!.add(bmp180_elem)
+                    }
+                }
             }
         }
 
         return rest
     }
 
-    fun GetMaxMinLast(date: Date): PressureDataClass? {
-        var data = GetByDate(date)
+    fun GetMaxMinLast(date: Date,context: Context): PressureDataClass? {
+        val isInternet = Additionals.IsInternetConnection(context)
+        var data = GetByDate(date,isInternet)
         data?.let {
             val min = data!!.minBy { it.pressure }!!.pressure
 

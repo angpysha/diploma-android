@@ -19,6 +19,6 @@
         <item>День</item>
         <item>Неделя</item>
         <item>Месяц</item>
-        <item>Год</item>
+        <!--<item>Год</item>-->
     </string-array>
 </resources>

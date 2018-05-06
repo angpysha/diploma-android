@@ -16,7 +16,10 @@
 
 package com.andrewpetrowski.raspiinfo.Helpers
 
+import android.content.Context
+import android.net.ConnectivityManager
 import org.joda.time.*
+import java.net.InetAddress
 import java.time.Month
 import java.time.Year
 import java.util.*
@@ -82,6 +85,16 @@ class Additionals {
             val dateTime2: DateTime = DateTime(date2)
 
             return Years.yearsBetween(datetime1,dateTime2).years
+        }
+
+        fun IsInternetConnection(context: Context): Boolean {
+            try {
+           val adr: InetAddress = InetAddress.getByName("google.com")
+                return !adr.equals("")
+            } catch (ex: Exception) {
+                return false
+            }
+
         }
     }
 }

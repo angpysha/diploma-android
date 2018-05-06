@@ -82,10 +82,10 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         val args = arguments
         val date = args!!.getString("DATE").toDate()
         val type = args!!.getString("TYPE").toInt()
-        LoadData().execute(TaskParams(date, type))
+        LoadData(context).execute(TaskParams(date, type))
 
         swiperefresh_pressure!!.setOnRefreshListener {
-            LoadData().execute(TaskParams(date, type))
+            LoadData(context).execute(TaskParams(date, type))
         }
 
         sel_date_pres_but!!.setOnClickListener {
@@ -168,8 +168,14 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
     }
 
-    inner class LoadData() : AsyncTask<TaskParams, Void, List<Bmp180_Data>?>() {
+    inner class LoadData(context: Context?) : AsyncTask<TaskParams, Void, List<Bmp180_Data>?>() {
         private lateinit var _date: Date
+        private lateinit var _context: Context
+
+        init {
+            _context = context!!
+        }
+
         private var type = 0
         override fun doInBackground(vararg params: TaskParams?): List<Bmp180_Data>? {
             val bmp = AndroidBMPController()
@@ -181,7 +187,8 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
             when (this.type) {
                 0 -> {
-                    data = bmp.GetByDate(date)
+                    val isInternt = Additionals.IsInternetConnection(_context)
+                    data = bmp.GetByDate(date,isInternt)
                 }
                 1 -> {
                     val calendar = Calendar.getInstance()
@@ -195,9 +202,10 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
 
 //                    }
+                    val isInternt = Additionals.IsInternetConnection(_context)
                     if (calendar.time > now)
                         calendar.time = now.fullTime()
-                    data = bmp.GetByDate(calendar.time, 1)
+                    data = bmp.GetByDate(calendar.time, 1,isInternt)
                 }
 
                 2 -> {
@@ -208,9 +216,10 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
                     calendar.set(Calendar.DAY_OF_MONTH, maxDay)
+                    val isInternt = Additionals.IsInternetConnection(_context)
                     if (calendar.time > now)
                         calendar.time = now.fullTime()
-                    data = bmp.GetByDate(calendar.time, 2)
+                    data = bmp.GetByDate(calendar.time, 2,isInternt)
                 }
 
                 3 -> {
@@ -219,11 +228,12 @@ class PressureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     val now = Date()
 
                     val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_YEAR)
+                    val isInternt = Additionals.IsInternetConnection(_context)
 
                     calendar.set(Calendar.DAY_OF_YEAR, maxDay)
                     if (calendar.time > now)
                         calendar.time = now.fullTime()
-                    data = bmp.GetByDate(calendar.time, 3)
+                    data = bmp.GetByDate(calendar.time, 3,isInternt)
                 }
             }
             _date = date

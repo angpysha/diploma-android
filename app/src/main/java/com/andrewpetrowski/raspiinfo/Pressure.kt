@@ -34,12 +34,14 @@ import com.mikepenz.materialdrawer.Drawer
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_pressure.*
 import com.andrewpetrowski.raspiinfo.Adapters.PressureFragmentAdapter
+import com.andrewpetrowski.raspiinfo.Controllers.ORMBMPController
 import io.github.angpysha.diploma_bridge.Controllers.BmpController
 import com.andrewpetrowski.raspiinfo.Helpers.Additionals
 import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
+import com.andrewpetrowski.raspiinfo.Records.BMP180
 
-class Pressure : AppCompatActivity(),AdapterView.OnItemSelectedListener,
-ViewPager.OnPageChangeListener{
+class Pressure : AppCompatActivity(), AdapterView.OnItemSelectedListener,
+        ViewPager.OnPageChangeListener {
     override fun onPageScrollStateChanged(state: Int) {
 
     }
@@ -66,11 +68,11 @@ ViewPager.OnPageChangeListener{
         progress = MaterialDialog.Builder(this)
                 .title(resources.getString(R.string.progress_title))
                 .content(resources.getString(R.string.progress_content))
-                .progress(true,0)
+                .progress(true, 0)
                 .show()
         when (position) {
             0 -> {
-                val _size = LoadSize(this).execute(0).get()?:1
+                val _size = LoadSize(this).execute(0).get() ?: 1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = PressureFragmentAdapter(supportFragmentManager, _size)
 
@@ -81,7 +83,7 @@ ViewPager.OnPageChangeListener{
             }
 
             1 -> {
-                val _size = LoadSize(this).execute(1).get()?:1
+                val _size = LoadSize(this).execute(1).get() ?: 1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = PressureFragmentAdapter(supportFragmentManager, _size, 1)
 
@@ -92,7 +94,7 @@ ViewPager.OnPageChangeListener{
             }
 
             2 -> {
-                val _size = LoadSize(this).execute(2).get()?:1
+                val _size = LoadSize(this).execute(2).get() ?: 1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = PressureFragmentAdapter(supportFragmentManager, _size, 2)
 
@@ -102,7 +104,7 @@ ViewPager.OnPageChangeListener{
 
             }
             3 -> {
-                val _size = LoadSize(this).execute(3).get()?:1
+                val _size = LoadSize(this).execute(3).get() ?: 1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = PressureFragmentAdapter(supportFragmentManager, _size, 3)
 
@@ -159,7 +161,7 @@ ViewPager.OnPageChangeListener{
                 identifier = 3
                 iicon = FontAwesome.Icon.faw_tint
                 onClick { _ ->
-                    val intent: Intent = Intent(this@Pressure,Humidity::class.java)
+                    val intent: Intent = Intent(this@Pressure, Humidity::class.java)
                     startActivity(intent)
                     result?.closeDrawer()
                     false
@@ -192,7 +194,7 @@ ViewPager.OnPageChangeListener{
         pager_pressure!!.addOnPageChangeListener(this)
     }
 
-    inner class LoadSize(context:Context): AsyncTask<Int,Void,Int?>() {
+    inner class LoadSize(context: Context) : AsyncTask<Int, Void, Int?>() {
         private lateinit var context: Context
 
         init {
@@ -207,26 +209,46 @@ ViewPager.OnPageChangeListener{
                 0 -> {
 
                     size = bmp.GetDatesCount()
+                    if (size == null) {
+                        val ormbmpp = ORMBMPController()
+                        size = ormbmpp!!.getDatesCount()
+                    }
+
                 }
 
                 1 -> {
                     val dates = bmp.GetMinMaxDate()
 
-                    size = Additionals.WeeksDiff(dates[0],dates[1])+2
+                    if (dates == null) {
+                        val ormbmp = ORMBMPController()
+                        val datesminmax = ormbmp.GetMinMaxDate()
+                        size = Additionals.WeeksDiff(datesminmax[0], datesminmax[1]) + 2
+                    } else
+                        size = Additionals.WeeksDiff(dates[0], dates[1]) + 2
+
                 }
 
                 2 -> {
 
                     val dates = bmp.GetMinMaxDate()
-
-                    size = Additionals.MonthDiff(dates[0],dates[1])+2
+                    if (dates == null) {
+                        val ormbmp = ORMBMPController()
+                        val datesminmax = ormbmp.GetMinMaxDate()
+                        size = Additionals.MonthDiff(datesminmax[0], datesminmax[1]) + 2
+                    } else
+                        size = Additionals.MonthDiff(dates[0], dates[1]) + 2
                 }
 
                 3 -> {
 
                     val dates = bmp.GetMinMaxDate()
 
-                    size = Additionals.YearsDiff(dates[0],dates[1])+2
+                    if (dates == null) {
+                        val ormbmp = ORMBMPController()
+                        val datesminmax = ormbmp.GetMinMaxDate()
+                        size = Additionals.YearsDiff(datesminmax[0], datesminmax[1]) + 2
+                    } else
+                        size = Additionals.YearsDiff(dates[0], dates[1]) + 2
                 }
             }
             return size

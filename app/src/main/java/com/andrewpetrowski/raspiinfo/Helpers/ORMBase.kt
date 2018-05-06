@@ -67,15 +67,31 @@ open abstract class ORMBase<T> where T: SugarRecord<T> {
         for (i in 0 until numElements) {
             val dayAfter = dateMutable.Increment()
 //            val localData = SugarRecord.find(BMP180::class.java,"date >= ? and date <= ?", date.time.toString(),dayAfter.time.toString())
-            val localData = SugarRecord.find(tClass,"date >= ? and date <= ?",date.time.toString(),
-                    dayAfter.time.toString())
+            val localData = SugarRecord.find(tClass,"date >= ? and date <= ?",dateMutable.toSQLiteString(),
+                    dayAfter.toSQLiteString())
             val aver: T = GetAverage(localData,i)
             dat!!.add(aver)
-            dateMutable = date.Decrement()
+            dateMutable = dateMutable.Decrement()
         }
 
         return dat
     }
 
     protected abstract fun GetAverage(elems: MutableList<T>?,pos: Int) : T
+
+    fun getDatesCount(tClass: Class<T>): Int{
+        val elems = SugarRecord.listAll(tClass)
+        return elems.count()
+    }
+
+    @Deprecated("Not ideal method")
+    fun getDatesCount(filter: EORMFilter) {
+        when(filter) {
+            EORMFilter.Week -> {
+
+            }
+        }
+    }
+
+    protected abstract fun GetMinMaxDate() : Array<Date>
 }

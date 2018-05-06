@@ -19,12 +19,17 @@ package com.andrewpetrowski.raspiinfo.Controllers
 import com.andrewpetrowski.raspiinfo.Helpers.ORMBase
 import com.andrewpetrowski.raspiinfo.Records.DHT11
 import io.github.angpysha.diploma_bridge.Models.DHT11_Data
+import java.util.*
 
 /**
  * Created by andre on 09.04.2018.
  */
 
 class ORMDHTController : ORMBase<DHT11>() {
+    override fun GetMinMaxDate(): Array<Date> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun GetAverage(elems: MutableList<DHT11>?, pos: Int): DHT11 {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

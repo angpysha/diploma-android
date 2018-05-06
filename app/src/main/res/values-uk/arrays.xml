@@ -20,6 +20,6 @@
         <item>День</item>
         <item>Тиждень</item>
         <item>Місяць</item>
-        <item>Рік</item>
+        <!--<item>Рік</item>-->
     </string-array>
 </resources>
