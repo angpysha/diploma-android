@@ -261,14 +261,15 @@ class Main : AppCompatActivity() {
 
         override fun doInBackground(vararg p0: Void?): DHT11_Data {
             try {
-                val dhtController: DhtController = DhtController()
-                dhtController.baseUrl = BASE_URL
-                var dhtData: DHT11_Data = DHT11_Data(25f, 11f)
-
-                dhtData = dhtController.GetLast(DHT11_Data::class.java)
-
-
-                //      val dhtData: DHT11_Data = DHT11_Data(23f, 48f)
+//                val dhtController: DhtController = DhtController()
+//                dhtController.baseUrl = BASE_URL
+//                var dhtData: DHT11_Data = DHT11_Data(25f, 11f)
+//
+//                dhtData = dhtController.GetLast(DHT11_Data::class.java)
+                val date = Date().zeroTime()
+                val isInternet = Additionals.IsInternetConnection()
+                val dhtContr = AndroidDHTController()
+                val dhtData = dhtContr.GetByDate(date,isInternet)!!.sortedBy { it.created_at }.last()
 
                 return dhtData
             } catch (ex: Exception) {

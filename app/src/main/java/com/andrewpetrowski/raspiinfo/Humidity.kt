@@ -31,6 +31,7 @@ import co.zsmb.materialdrawerkt.draweritems.divider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Adapters.HumidityFragmentAdapter
 import com.andrewpetrowski.raspiinfo.Adapters.TemperatureFragmentAdapter
+import com.andrewpetrowski.raspiinfo.Controllers.ORMDHTController
 import com.andrewpetrowski.raspiinfo.Helpers.Additionals
 import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
 import com.andrewpetrowski.raspiinfo.Models.FragmentAdapterParams
@@ -41,7 +42,7 @@ import kotlinx.android.synthetic.main.activity_humidity.*
 import kotlinx.android.synthetic.main.activity_temperature.*
 
 class Humidity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
-ViewPager.OnPageChangeListener{
+        ViewPager.OnPageChangeListener {
     override fun onPageScrollStateChanged(state: Int) {
 
     }
@@ -67,11 +68,11 @@ ViewPager.OnPageChangeListener{
         progress = MaterialDialog.Builder(this)
                 .title(resources.getString(R.string.progress_title))
                 .content(resources.getString(R.string.progress_content))
-                .progress(true,0)
+                .progress(true, 0)
                 .show()
         when (position) {
             0 -> {
-                val _size = LoadSize(this).execute(0).get()?:1
+                val _size = LoadSize(this).execute(0).get() ?: 1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = HumidityFragmentAdapter(supportFragmentManager, _size)
 
@@ -82,7 +83,7 @@ ViewPager.OnPageChangeListener{
             }
 
             1 -> {
-                val _size = LoadSize(this).execute(1).get()?:1
+                val _size = LoadSize(this).execute(1).get() ?: 1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 1)
 
@@ -93,7 +94,7 @@ ViewPager.OnPageChangeListener{
             }
 
             2 -> {
-                val _size = LoadSize(this).execute(2).get()?:1
+                val _size = LoadSize(this).execute(2).get() ?: 1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 2)
 
@@ -103,7 +104,7 @@ ViewPager.OnPageChangeListener{
                 spinner_humidity!!.onItemSelectedListener = this
             }
             3 -> {
-                val _size = LoadSize(this).execute(3).get()?:1
+                val _size = LoadSize(this).execute(3).get() ?: 1
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
                 val adapter = HumidityFragmentAdapter(supportFragmentManager, _size, 3)
 
@@ -162,7 +163,7 @@ ViewPager.OnPageChangeListener{
                 identifier = 4
                 iicon = FontAwesome.Icon.faw_tachometer
                 onClick { _ ->
-                    val intent: Intent = Intent(this@Humidity,Pressure::class.java)
+                    val intent: Intent = Intent(this@Humidity, Pressure::class.java)
                     startActivity(intent)
                     result?.closeDrawer()
                     false
@@ -206,24 +207,40 @@ ViewPager.OnPageChangeListener{
                 0 -> {
 
                     size = dht.GetDatesCount()
+                    if (size == null) {
+                        var ormdht = ORMDHTController()
+                        size = ormdht.getDatesCount()
+                    }
                 }
 
                 1 -> {
                     val dates = dht.GetMinMaxDate()
-
-                    size = Additionals.WeeksDiff(dates[0],dates[1])+1
+                    if (dates == null) {
+                        val ormdhtController = ORMDHTController()
+                        val datee = ormdhtController.GetMinMaxDate()
+                        size = Additionals.WeeksDiff(datee[0], datee[1]) + 1
+                    } else
+                        size = Additionals.WeeksDiff(dates[0], dates[1]) + 1
                 }
 
                 2 -> {
                     val dates = dht.GetMinMaxDate()
-
-                    size = Additionals.MonthDiff(dates[0],dates[1])+1
+                    if (dates == null) {
+                        val ormdhtController = ORMDHTController()
+                        val datee = ormdhtController.GetMinMaxDate()
+                        size = Additionals.MonthDiff(datee[0], datee[1]) + 1
+                    } else
+                        size = Additionals.MonthDiff(dates[0], dates[1]) + 1
                 }
 
                 3 -> {
                     val dates = dht.GetMinMaxDate()
-
-                    size = Additionals.YearsDiff(dates[0],dates[1])+1
+                    if (dates == null) {
+                        val ormdhtController = ORMDHTController()
+                        val datee = ormdhtController.GetMinMaxDate()
+                        size = Additionals.YearsDiff(datee[0], datee[1]) + 1
+                    } else
+                        size = Additionals.YearsDiff(dates[0], dates[1]) + 1
                 }
             }
             return size

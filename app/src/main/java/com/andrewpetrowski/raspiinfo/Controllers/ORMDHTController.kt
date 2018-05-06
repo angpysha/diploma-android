@@ -16,8 +16,13 @@
 
 package com.andrewpetrowski.raspiinfo.Controllers
 
+import com.andrewpetrowski.raspiinfo.Helpers.Additionals
 import com.andrewpetrowski.raspiinfo.Helpers.ORMBase
+import com.andrewpetrowski.raspiinfo.Helpers.fromSQLiteString
+import com.andrewpetrowski.raspiinfo.Helpers.toSQLiteString
 import com.andrewpetrowski.raspiinfo.Records.DHT11
+import com.orm.SugarRecord
+import io.github.angpysha.diploma_bridge.Decorators.DateEx
 import io.github.angpysha.diploma_bridge.Models.DHT11_Data
 import java.util.*
 
@@ -26,12 +31,51 @@ import java.util.*
  */
 
 class ORMDHTController : ORMBase<DHT11>() {
-    override fun GetMinMaxDate(): Array<Date> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    public override fun GetMinMaxDate(): Array<Date> {
+        val elems = SugarRecord.listAll(DHT11::class.java)
+        elems.sortBy { it.date }
+        val date1 = elems.first().date!!.fromSQLiteString()
+        val date2 = elems.last().date!!.fromSQLiteString()
+        var dates: Array<Date> = arrayOf(date1,date2)
+        return dates
     }
 
     override fun GetAverage(elems: MutableList<DHT11>?, pos: Int): DHT11 {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var temperature: Double = 0.0
+        var humidity: Double = 0.0
+
+        for (elem in elems!!.iterator()) {
+            temperature += elem!!.temperature!!
+            humidity += elem!!.humidity!!
+
+        }
+
+        temperature /= elems.count()
+        humidity /= elems.count()
+
+        var date1 = Date()
+
+        if (elems.isNotEmpty()) {
+            date1 = elems[0]!!.date!!.fromSQLiteString()
+
+        } else {
+            date1 = DateEx(date1).AddDate(-pos)
+            if (temperature.isNaN())
+                temperature = 0.0
+            if (humidity.isNaN())
+                humidity = 0.0
+        }
+
+        return DHT11(temperature,humidity,date1.toSQLiteString())
+    }
+
+    fun getDatesCount(): Int {
+        val elems = SugarRecord.listAll(DHT11::class.java)
+        elems.sortBy { it.date }
+        val date1 = elems.first().date!!.fromSQLiteString()
+        val date2 = elems.last().date!!.fromSQLiteString()
+        val days = Additionals.DaysDiff(date1 = date1,date2 = date2 )
+        return days
     }
 
 }

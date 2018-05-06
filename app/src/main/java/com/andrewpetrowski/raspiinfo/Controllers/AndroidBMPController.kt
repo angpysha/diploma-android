@@ -54,12 +54,9 @@ class AndroidBMPController {
         try {
             val localData = SugarRecord.find(BMP180::class.java, "date > ? and date < ?", date.toSQLiteString(),
                     dayAfter.toSQLiteString())
-            //val localData2= localData.filter { it -> it.date!! >  date && it.date!! < dayAfter.time }
-            val all = SugarRecord.listAll(BMP180::class.java)
             val tmpDate = Date()
             val tmpCalendar = Calendar.getInstance()
             tmpCalendar.time = tmpDate
-            val hours = tmpCalendar.get(Calendar.HOUR_OF_DAY)
             if (localData.isEmpty() || internetAccess) {
                 data = bmp.SearchAsync(filter, Bmp180_Data::class.java).get()
                 data.forEach { x ->
@@ -153,7 +150,7 @@ class AndroidBMPController {
             2 -> {
                 val ormbmp = ORMBMPController()
                 val localdata = ormbmp.GetByPeriod(date, EORMFilter.Month, BMP180::class.java)
-                if (localdata!!.isEmpty()) {
+                if (localdata!!.isEmpty() || internetAccess) {
                     rest = bmp.GetByPeriod(date, DisplayPeriod.MONTH, Bmp180_Data::class.java, BmpSearch::class.java)
                     rest.forEach { x ->
                         var bmpp = BMP180(x!!.pressure.toDouble(), x!!.temperature.toDouble(),
@@ -176,7 +173,7 @@ class AndroidBMPController {
             3 -> {
                 val ormbmp = ORMBMPController()
                 val localdata = ormbmp.GetByPeriod(date, EORMFilter.Year, BMP180::class.java)
-                if (localdata!!.isEmpty()) {
+                if (localdata!!.isEmpty() || internetAccess) {
                     rest = bmp.GetByPeriod(date, DisplayPeriod.YEAR, Bmp180_Data::class.java, BmpSearch::class.java)
                     rest.forEach { x ->
                         var bmpp = BMP180(x!!.pressure.toDouble(), x!!.temperature.toDouble(),

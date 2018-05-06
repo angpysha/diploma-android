@@ -221,25 +221,21 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             val type = params[0]!!.type
             this.type = type
             var data: List<DHT11_Data>? = ArrayList()
+            val isInet = Additionals.IsInternetConnection()
             when (type) {
                 0 -> {
-                    data = temperatureContorller.GetByDate(date)?.sortedBy { it.created_at }
+                    data = temperatureContorller.GetByDate(date,isInet)?.sortedBy { it.created_at }
                 }
                 1 -> {
                     val calendar = Calendar.getInstance()
                     calendar.time = date.fullTime()
                     val now = Date()
-                    // calendar.set(Calendar.DAY_OF_MONTH,27)
-//                    val calendar = GregorianCalendar
-//                    if (calendar.firstDayOfWeek == Calendar.MONDAY) {
-//                        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-//                    } else {
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
 
 //                    }
                     if (calendar.time > now)
                         calendar.time = now.fullTime()
-                    data = temperatureContorller.GetByDate(calendar.time, 1)
+                    data = temperatureContorller.GetByDate(calendar.time, 1,isInet)
                 }
 
                 2 -> {
@@ -252,7 +248,7 @@ class TemperatureFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     calendar.set(Calendar.DAY_OF_MONTH, maxDay)
                     if (calendar.time > now)
                         calendar.time = now.fullTime()
-                    data = temperatureContorller.GetByDate(calendar.time, 2)
+                    data = temperatureContorller.GetByDate(calendar.time, 2,isInet)
 
                 }
                 3 -> {

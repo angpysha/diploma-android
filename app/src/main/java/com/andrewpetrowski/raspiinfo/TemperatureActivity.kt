@@ -31,6 +31,7 @@ import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import co.zsmb.materialdrawerkt.draweritems.divider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.andrewpetrowski.raspiinfo.Adapters.TemperatureFragmentAdapter
+import com.andrewpetrowski.raspiinfo.Controllers.ORMDHTController
 import com.andrewpetrowski.raspiinfo.Models.FragmentAdapterParams
 import com.github.pwittchen.swipe.library.rx2.Swipe
 import com.mikepenz.materialdrawer.Drawer
@@ -44,7 +45,7 @@ import com.andrewpetrowski.raspiinfo.Helpers.Additionals
 import com.andrewpetrowski.raspiinfo.Helpers.BASE_URL
 
 class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DatePickerDialog.OnDateSetListener
-        , AdapterView.OnItemSelectedListener,ViewPager.OnPageChangeListener {
+        , AdapterView.OnItemSelectedListener, ViewPager.OnPageChangeListener {
     override fun onPageScrollStateChanged(state: Int) {
 
     }
@@ -70,38 +71,38 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
         progress = MaterialDialog.Builder(this)
                 .title(resources.getString(R.string.progress_title))
                 .content(resources.getString(R.string.progress_content))
-                .progress(true,0)
+                .progress(true, 0)
                 .show()
         when (position) {
             0 -> {
                 val _size = LoadSize(this).execute(0).get()
 //        val adapter = GetAdapter().execute(FragmentAdapterParams(supportFragmentManager,_size)).get()
-                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size?:1)
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size ?: 1)
 
                 pager_temperature!!.adapter = adapter
-                pager_temperature!!.currentItem = _size?:1 - 1
+                pager_temperature!!.currentItem = _size ?: 1 - 1
             }
             1 -> {
                 val _size = LoadSize(this).execute(1).get()
-                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size?:1, 1)
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size ?: 1, 1)
 
                 pager_temperature!!.adapter = adapter
-                pager_temperature!!.currentItem = _size?:1 - 1
+                pager_temperature!!.currentItem = _size ?: 1 - 1
 
             }
             2 -> {
                 val _size = LoadSize(this).execute(2).get()
-                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size?:1, 2)
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size ?: 1, 2)
 
                 pager_temperature!!.adapter = adapter
-                pager_temperature!!.currentItem = _size?:1 - 1
+                pager_temperature!!.currentItem = _size ?: 1 - 1
 
             }
             3 -> {
                 val _size = LoadSize(this).execute(3).get()
-                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size?:1, 3)
+                val adapter = TemperatureFragmentAdapter(supportFragmentManager, _size ?: 1, 3)
                 pager_temperature!!.adapter = adapter
-                pager_temperature!!.currentItem = _size?: - 1
+                pager_temperature!!.currentItem = _size ?: -1
             }
         }
     }
@@ -112,6 +113,7 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
 
         // LoadAsync().execute(calendar.time.zeroTime())
     }
+
     lateinit var progress: MaterialDialog
     private lateinit var result: Drawer
     private lateinit var cur_date: Date
@@ -165,7 +167,7 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
                 identifier = 4
                 iicon = FontAwesome.Icon.faw_tachometer
                 onClick { _ ->
-                    val intent: Intent = Intent(this@TemperatureActivity,Pressure::class.java)
+                    val intent: Intent = Intent(this@TemperatureActivity, Pressure::class.java)
                     startActivity(intent)
                     result?.closeDrawer()
                     false
@@ -210,31 +212,43 @@ class TemperatureActivity : AppCompatActivity()/*, View.OnTouchListener*/, DateP
         }
 
         override fun doInBackground(vararg params: Int?): Int? {
-            var size:Int? = 0
+            var size: Int? = 0
             val dht = DhtController()
             dht.baseUrl = BASE_URL
             when (params[0]) {
                 0 -> {
 
                     size = dht.GetDatesCount()
+                    if (size == null) {
+                        var ormdhtt = ORMDHTController()
+                        size = ormdhtt.getDatesCount()
+                    }
                 }
 
                 1 -> {
                     val dates = dht.GetMinMaxDate()
-
-                    size = Additionals.WeeksDiff(dates[0],dates[1])+1
+                    if (dates == null) {
+                        var ormdhtt = ORMDHTController()
+                        val datesmax = ormdhtt.GetMinMaxDate()
+                        size = Additionals.WeeksDiff(datesmax[0], datesmax[1]) + 1
+                    } else
+                        size = Additionals.WeeksDiff(dates[0], dates[1]) + 1
                 }
 
                 2 -> {
                     val dates = dht.GetMinMaxDate()
-
-                    size = Additionals.MonthDiff(dates[0],dates[1])+1
+                    if (dates == null) {
+                        var ormdhtt = ORMDHTController()
+                        val datesmax = ormdhtt.GetMinMaxDate()
+                        size = Additionals.MonthDiff(datesmax[0], datesmax[1]) + 1
+                    } else
+                        size = Additionals.MonthDiff(dates[0], dates[1]) + 1
                 }
 
                 3 -> {
                     val dates = dht.GetMinMaxDate()
 
-                    size = Additionals.YearsDiff(dates[0],dates[1])+1
+                    size = Additionals.YearsDiff(dates[0], dates[1]) + 1
                 }
             }
             return size

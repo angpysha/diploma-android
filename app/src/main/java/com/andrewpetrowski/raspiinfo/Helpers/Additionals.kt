@@ -96,5 +96,15 @@ class Additionals {
             }
 
         }
+
+        fun IsInternetConnection(): Boolean {
+            try {
+                val adr: InetAddress = InetAddress.getByName("google.com")
+                return !adr.equals("")
+            } catch (ex: Exception) {
+                return false
+            }
+
+        }
     }
 }

@@ -172,10 +172,11 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
             val date: Date = params[0]!!.date!!.zeroTime()
             var data: List<DHT11_Data>? = ArrayList()
+            val isInet = Additionals.IsInternetConnection()
             this.type = params[0]!!.type
             when (type) {
                 0 -> {
-                    data = temperatureContorller.GetByDate(date)
+                    data = temperatureContorller.GetByDate(date,isInet)
                 }
 
                 1 -> {
@@ -192,7 +193,7 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 //                    }
                     if (calendar.time > now)
                         calendar.time = now.fullTime()
-                    data = temperatureContorller.GetByDate(calendar.time, 1)
+                    data = temperatureContorller.GetByDate(calendar.time, 1,isInet)
                 }
 
                 2 -> {
@@ -205,7 +206,7 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     calendar.set(Calendar.DAY_OF_MONTH, maxDay)
                     if (calendar.time > now)
                         calendar.time = now.fullTime()
-                    data = temperatureContorller.GetByDate(calendar.time, 2)
+                    data = temperatureContorller.GetByDate(calendar.time, 2,isInet)
 
                 }
                 3 -> {
@@ -218,7 +219,7 @@ class HumidityFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     calendar.set(Calendar.DAY_OF_YEAR, maxDay)
                     if (calendar.time > now)
                         calendar.time = now.fullTime()
-                    data = temperatureContorller.GetByDate(calendar.time, 3)
+                    data = temperatureContorller.GetByDate(calendar.time, 3,isInet)
                 }
             }
             _date = date
