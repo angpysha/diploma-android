@@ -161,6 +161,12 @@ class Main : AppCompatActivity() {
             primaryItem(resources.getString(R.string.about)) {
                 identifier = 5
                 iicon = FontAwesome.Icon.faw_info
+                onClick { _ ->
+                    val intent = Intent(this@Main,AboutActivity::class.java)
+                    startActivity(intent)
+                    result?.closeDrawer()
+                    false
+                }
             }
             toolbar = this@Main.toolbar
         }
