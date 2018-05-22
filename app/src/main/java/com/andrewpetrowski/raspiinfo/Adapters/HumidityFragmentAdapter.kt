@@ -32,10 +32,8 @@ import com.andrewpetrowski.raspiinfo.TemperatureFragment
 class HumidityFragmentAdapter(fragmentManager: FragmentManager, size:Int) : FragmentStatePagerAdapter(fragmentManager) {
     private var size: Int = 0
     private var type = 0
-    // private lateinit var pair : PageDatePair
     init {
         this.size = size
-        //  pair = PageDatePair(count)
 
     }
 

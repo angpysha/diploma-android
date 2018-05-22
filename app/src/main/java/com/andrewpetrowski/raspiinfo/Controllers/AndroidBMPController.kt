@@ -39,8 +39,6 @@ class AndroidBMPController {
     //TODO: CHECK FOR NULL
     fun GetByDate(date: Date, internetAccess: Boolean = true): List<Bmp180_Data>? {
         var calendar = Calendar.getInstance()
-
-
         calendar.time = date.zeroTime()
         calendar.add(Calendar.DATE, 1)
         var dayAfter = calendar.time
